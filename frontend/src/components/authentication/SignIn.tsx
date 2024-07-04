@@ -1,6 +1,13 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import useAuthentication from "../../hooks/useAuthentication";
 
 export default function SignIn() {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	const { loginUser } = useAuthentication();
+
 	return (
 		<div className="w-full bg-gray-900 h-screen text-white">
 			<div className="w-2/5 h-screen p-3 rounded-md mt-10 absolute">
@@ -16,16 +23,6 @@ export default function SignIn() {
 					</span>
 				</p>
 				<div className="w-full p-3">
-					<div>
-						<label htmlFor="full-name">Full Name</label>
-						<br />
-						<input
-							type="text"
-							id="full-name"
-							placeholder="Full Name"
-							className="p-4 mt-2 border border-blue-500 rounded w-full bg-sky-950 outline-blue-300"
-						/>
-					</div>
 					<div className="mt-5">
 						<label htmlFor="last-name" className="text-white">
 							Email
@@ -36,6 +33,8 @@ export default function SignIn() {
 							id="email"
 							placeholder="Email"
 							className="p-4 mt-2 border border-blue-500 rounded w-full bg-sky-950 outline-blue-300"
+							value={email}
+							onChange={e => setEmail(e.target.value)}
 						/>
 					</div>
 					<div className="mt-5">
@@ -46,10 +45,15 @@ export default function SignIn() {
 							id="password"
 							placeholder="Password"
 							className="p-4 mt-2 border border-blue-500 rounded w-full bg-sky-950 outline-blue-300"
+							value={password}
+							onChange={e => setPassword(e.target.value)}
 						/>
 					</div>
 					<div className="mt-10">
-						<button className="border border-blue-300 text-blue-300 font-bold rounded w-full p-2 h-14 bg-sky-950 active:bg-sky-800 active:text-blue-200">
+						<button
+							className="border border-blue-300 text-blue-300 font-bold rounded w-full p-2 h-14 bg-sky-950 active:bg-sky-800 active:text-blue-200"
+							onClick={() => loginUser(email, password)}
+						>
 							LOGIN
 						</button>
 					</div>
