@@ -1,0 +1,142 @@
+import Contact from "../ContactBlock";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+	faGear,
+	faInbox,
+	faMagnifyingGlass,
+	faPenToSquare,
+	faPlus,
+	faX
+} from "@fortawesome/free-solid-svg-icons";
+import DMRequests from "./sub-panels/dms/DMRequests";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Settings from "./sub-panels/Settings";
+
+// TODO
+// Design the DM Requests layout
+// Add a delete button for each contact
+// Add a settings button
+//	--> within settings:
+//		- add a count of how many friends and contacts the user has
+// 		- add a biography section
+//		- add the ability for users to change their profile pictures
+// The delete feature:
+// --> if a user deletes a conversation between another user, it removes them from the array of 'members'
+//		--> if the other user sends a message in the conversation, it re-adds the other user and therefore will show up for them
+
+export default function LeftPanel() {
+	const curr_url = window.location.href;
+	const [DMRequestSelected, setDMRequestSelected] = useState(false);
+	const [settingsPage, setSettingsPage] = useState(false);
+	const [addUserMode, setAddUserMode] = useState(false);
+
+	function updatePageStatus(page: string) {
+		page === "dm_request"
+			? setDMRequestSelected(false)
+			: setSettingsPage(false);
+	}
+
+	useEffect(() => {
+		setDMRequestSelected(curr_url.includes("/dm-requests"));
+		setSettingsPage(curr_url.includes("/settings"));
+	}, [curr_url]);
+
+	return !settingsPage && !DMRequestSelected ? (
+		<div className="border border-blue-500 h-screen w-1/4 bg-slate-800">
+			<div className="w-full h-24 bg-slate-800 relative">
+				<div className="m-3">
+					<div className="flex items-center">
+						<img
+							src="https://i.pinimg.com/originals/89/1e/21/891e214227a47d859de482c85f66a50b.gif"
+							alt="Pfp"
+							className="w-12 h-12 object-cover rounded-md border border-blue-400"
+						/>
+						<div className="text-base ml-3">
+							<h1 className="text-slate-300 text-sm">Hairum Qureshi</h1>
+							<p className="text-xs text-purple-400 font-semibold ">
+								Insert some wacky user status here
+							</p>
+						</div>
+						<Link
+							to="/conversations/settings"
+							className="text-xl ml-auto border border-pink-400 rounded p-1 w-10 text-center bg-pink-800 hover:cursor-pointer active:bg-pink-600"
+						>
+							<div onClick={() => setSettingsPage(true)}>
+								<FontAwesomeIcon icon={faGear} />
+							</div>
+						</Link>
+					</div>
+				</div>
+				<div className="flex items-center justify-between mb-2 absolute bottom-0 left-2 right-2">
+					<h1 className="text-2xl font-semibold">Your Conversations</h1>
+					<div className="flex-grow"></div>
+					{!addUserMode ? (
+						<FontAwesomeIcon
+							icon={faPenToSquare}
+							className="text-xl border border-blue-400 p-1 bg-blue-800 rounded mr-3 hover:cursor-pointer active:bg-blue-700"
+							onClick={() => setAddUserMode(true)}
+						/>
+					) : (
+						<FontAwesomeIcon
+							icon={faX}
+							className="text-xl border border-red-400 p-1 bg-red-800 rounded mr-3 hover:cursor-pointer active:bg-red-700 w-5"
+							onClick={() => setAddUserMode(false)}
+						/>
+					)}
+					<Link
+						to="/conversations/dm-requests"
+						className="text-xl border border-green-400 p-1 bg-green-800 rounded hover:cursor-pointer active:bg-green-700"
+					>
+						<FontAwesomeIcon
+							icon={faInbox}
+							onClick={() => setDMRequestSelected(true)}
+							className="flex items-center justify-center"
+						/>
+					</Link>
+				</div>
+			</div>
+			<div className="w-full p-2 border border-blue-500 bg-slate-900 h-12 text-slate-300 flex items-center">
+				{!addUserMode ? (
+					<>
+						<input
+							type="text"
+							placeholder="Search user"
+							className="bg-slate-900 w-full outline-none p-2"
+							// className="w-full p-2 border border-blue-500 outline-none bg-slate-900 h-12 text-slate-300"
+						/>
+						<FontAwesomeIcon
+							icon={faMagnifyingGlass}
+							className="text-xl text-white hover:cursor-pointer"
+						/>
+					</>
+				) : (
+					<>
+						<input
+							type="text"
+							placeholder="Add user by ID"
+							className="bg-slate-900 w-full outline-none p-2"
+						/>
+						<FontAwesomeIcon
+							icon={faPlus}
+							className="text-lg text-white rounded-lg border border-green-400 p-1 w-5 bg-green-800 hover:cursor-pointer active:bg-green-900"
+						/>
+					</>
+				)}
+			</div>
+			<div className="w-full h-4/5 overflow-scroll">
+				{/* <div className="p-5 text-xl text-slate-400 font-semibold text-center">
+					<h1>
+						You currently have no contacts. Send a DM request by clicking the
+						blue 'create conversation' button!
+					</h1>
+				</div> */}
+				<Contact />
+			</div>
+		</div>
+	) : DMRequestSelected ? (
+		<DMRequests updatePageStatus={updatePageStatus} />
+	) : (
+		<Settings updatePageStatus={updatePageStatus} />
+	);
+}
