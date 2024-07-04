@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import auth_router from "./routes/authentication";
+import mongoose from "mongoose";
 
 dotenv.config();
 colors.enable();
@@ -21,10 +22,20 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
-const PORT: string | number = process.env.PORT! || 3000;
-
 app.use('/api/auth', auth_router);
 
-app.listen(PORT, () => {
-	console.log(`Server listening on port ${PORT}!`.magenta.bold);
-});
+const PORT: string | number = process.env.PORT! || 3000;
+const MONGO_URI:string = process.env.MONGO_URI!;
+
+mongoose
+	.connect(MONGO_URI)
+	.then(() => {
+		app.listen(PORT, () => {
+			console.log(
+				`Successfully connected to MongoDB! Server listening on port ${PORT}`.magenta.bold
+			);
+		});
+	})
+	.catch(err => {
+		console.log(err);
+	});
