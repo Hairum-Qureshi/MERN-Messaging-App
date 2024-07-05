@@ -4,6 +4,9 @@ import { User, ContextData, AuthContextProps } from "../interfaces";
 
 export const AuthContext = createContext<ContextData | null>(null);
 
+// TODO -
+// Consider using React Query for caching the user data
+
 export const AuthProvider = ({ children }: AuthContextProps) => {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -12,7 +15,7 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
 		const getCurrUserData = async () => {
 			try {
 				const userDataResponse = await axios.get(
-					"http://localhost:4000/api/users/current",
+					"http://localhost:3000/api/user/current",
 					{
 						withCredentials: true
 					}
@@ -34,7 +37,7 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
 	const signOut = async () => {
 		try {
 			const response = await axios.get(
-				"http://localhost:4000/api/auth/sign-out",
+				"http://localhost:3000/api/auth/sign-out",
 				{
 					withCredentials: true
 				}
