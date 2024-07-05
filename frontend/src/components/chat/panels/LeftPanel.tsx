@@ -12,6 +12,7 @@ import DMRequests from "./sub-panels/dms/DMRequests";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Settings from "./sub-panels/Settings";
+import useAuthContext from "../../../contexts/authContext";
 
 // TODO
 // Design the DM Requests layout
@@ -31,6 +32,10 @@ export default function LeftPanel() {
 	const [settingsPage, setSettingsPage] = useState(false);
 	const [addUserMode, setAddUserMode] = useState(false);
 
+	const { userData } = useAuthContext()!;
+
+	console.log(userData);
+
 	function updatePageStatus(page: string) {
 		page === "dm_request"
 			? setDMRequestSelected(false)
@@ -48,14 +53,15 @@ export default function LeftPanel() {
 				<div className="m-3">
 					<div className="flex items-center">
 						<img
-							src="https://i.pinimg.com/originals/89/1e/21/891e214227a47d859de482c85f66a50b.gif"
+							src={userData?.profile_picture}
 							alt="Pfp"
 							className="w-12 h-12 object-cover rounded-md border border-blue-400"
 						/>
 						<div className="text-base ml-3">
-							<h1 className="text-slate-300 text-sm">Hairum Qureshi</h1>
+							<h1 className="text-slate-300 text-sm">{userData?.full_name}</h1>
 							<p className="text-xs text-purple-400 font-semibold ">
-								Insert some wacky user status here
+								{userData?.status_update ||
+									"Insert some wacky user status here"}
 							</p>
 						</div>
 						<Link
@@ -125,13 +131,13 @@ export default function LeftPanel() {
 				)}
 			</div>
 			<div className="w-full h-4/5 overflow-scroll">
-				{/* <div className="p-5 text-xl text-slate-400 font-semibold text-center">
+				<div className="p-5 text-xl text-slate-400 font-semibold text-center">
 					<h1>
 						You currently have no contacts. Send a DM request by clicking the
 						blue 'create conversation' button!
 					</h1>
-				</div> */}
-				<Contact />
+				</div>
+				{/* <Contact /> */}
 			</div>
 		</div>
 	) : DMRequestSelected ? (

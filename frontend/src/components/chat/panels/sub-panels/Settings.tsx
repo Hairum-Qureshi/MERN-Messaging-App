@@ -2,6 +2,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
+import useAuthContext from "../../../../contexts/authContext";
 
 interface Props {
 	updatePageStatus: (page: string) => void;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function Settings({ updatePageStatus }: Props) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const { userData } = useAuthContext()!;
 
 	function changePfp() {
 		fileInputRef.current?.click();
@@ -33,8 +35,8 @@ export default function Settings({ updatePageStatus }: Props) {
 			</div>
 			<div className="w-full m-2">
 				<h1 className="text-2xl font-semibold">Settings</h1>
-				<h1 className="text-base font-semibold">
-					Your Shareable ID: 018b2f0a45a7778b8
+				<h1 className="text-sm font-semibold">
+					Your Shareable ID: {userData?._id}
 				</h1>
 			</div>
 			<div className="w-full">
@@ -44,7 +46,7 @@ export default function Settings({ updatePageStatus }: Props) {
 				>
 					<input type="file" ref={fileInputRef} className="hidden" />
 					<img
-						src="https://i.pinimg.com/originals/89/1e/21/891e214227a47d859de482c85f66a50b.gif"
+						src={userData?.profile_picture}
 						alt="User pfp"
 						className="w-32 h-32 rounded-lg border border-white object-cover"
 					/>
@@ -72,6 +74,7 @@ export default function Settings({ updatePageStatus }: Props) {
 					type="text"
 					id="first-name"
 					placeholder="Enter your first name"
+					value={userData?.full_name.split(" ")[0]}
 					className="w-full mt-2 p-2 outline-none rounded text-sm bg-slate-900 border border-blue-500"
 				/>
 			</div>
@@ -83,6 +86,7 @@ export default function Settings({ updatePageStatus }: Props) {
 					type="text"
 					id="last-name"
 					placeholder="Enter your last name"
+					value={userData?.full_name.split(" ")[1]}
 					className="w-full mt-2 p-2 outline-none rounded text-sm bg-slate-900 border border-blue-500"
 				/>
 			</div>
@@ -94,6 +98,7 @@ export default function Settings({ updatePageStatus }: Props) {
 					id="biography"
 					placeholder="Write a short bio about yourself..."
 					className="w-full mt-2 p-2 flex-grow outline-none rounded text-sm bg-slate-900 border border-blue-500 resize-none h-full"
+					value={userData?.biography}
 				></textarea>
 			</div>
 			<div className="m-2">
