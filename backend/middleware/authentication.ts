@@ -13,10 +13,7 @@ const authenticated = (req: Request, res: Response, next: NextFunction) => {
 		jwt.verify(
 			token,
 			secret,
-			async (
-				err: Error | null,
-				decoded: string | jwt.JwtPayload | undefined
-			) => {
+			(err: Error | null, decoded: string | jwt.JwtPayload | undefined) => {
 				if (err) {
 					console.log("<authentication.ts> middleware".yellow.bold, err);
 					res.status(401).json({ message: "Invalid token" });
