@@ -10,6 +10,14 @@ const dmSchema = new Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User"
 		},
+		accepted: {
+			type: Boolean,
+			default: false
+		},
+		declined: {
+			type: Boolean,
+			default: false
+		},
 		message: {
 			type: String,
 			ref: "Message"
