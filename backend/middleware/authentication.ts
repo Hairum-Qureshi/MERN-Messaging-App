@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import colors from "colors";
 
 colors.enable();
@@ -13,12 +13,16 @@ const authenticated = (req: Request, res: Response, next: NextFunction) => {
 		jwt.verify(
 			token,
 			secret,
-			(err: Error | null, decoded: string | jwt.JwtPayload | undefined) => {
+			async (
+				err: Error | null,
+				decoded: string | jwt.JwtPayload | undefined
+			) => {
 				if (err) {
 					console.log("<authentication.ts> middleware".yellow.bold, err);
-					return res.status(401).json({ message: "Invalid token" });
+					res.status(401).json({ message: "Invalid token" });
 				} else {
-					console.log(decoded);
+					const decoded_parsed: JwtPayload = decoded as JwtPayload;
+					req.cookies.decoded_uid = decoded_parsed.user_id;
 					next();
 				}
 			}
