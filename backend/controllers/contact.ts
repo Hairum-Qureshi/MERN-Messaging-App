@@ -54,11 +54,12 @@ const getContacts = async (req: Request, res: Response) => {
 	const curr_uid: string = req.cookies.decoded_uid;
 	try {
 		const contacts = await Contact.find({ user_id: curr_uid })
+			.select("-_id contacts")
 			.populate({
 				path: "contacts",
 				select: "-password -__v"
-			})
-			.select("-password -__v");
+			});
+
 		return res.status(200).json(contacts);
 	} catch (error) {
 		console.log(
