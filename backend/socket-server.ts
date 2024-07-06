@@ -16,9 +16,9 @@ function addUser(user_id: string, socket_id: string) {
 	return;
 }
 
-function removeUser(user_id: string) {
+function removeUser(socket_id: string) {
 	onlineUsers = onlineUsers.filter(
-		(user: SocketData) => user.user_id !== user_id
+		(socket_data: SocketData) => socket_data.socket_id !== socket_id
 	);
 }
 
@@ -36,14 +36,13 @@ const initializeSocket = (server: HttpServer) => {
 	io.on("connection", (socket: Socket) => {
 		console.log("A user connected", socket.id);
 
-		socket.on("disconnect", () => {
-			console.log("User disconnected", socket.id);
+		socket.on("add-active-user", (user_id: string) => {
+			addUser(user_id, socket.id);
 		});
 
-		// Add your socket event listeners here
-		socket.on("sendMessage", message => {
-			console.log("Message received:", message);
-			io.emit("message", message);
+		socket.on("disconnect", () => {
+			console.log("A user disconnected");
+			removeUser(socket.id);
 		});
 	});
 
