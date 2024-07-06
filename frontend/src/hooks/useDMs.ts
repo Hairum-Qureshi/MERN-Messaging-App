@@ -32,7 +32,8 @@ export default function useDMs(): Tools {
 					}
 				})
 				.catch(error => {
-					console.log(error);
+					console.log(error.response.data.message);
+					alert(error.response.data.message);
 				});
 		} else {
 			alert("Please provide a user ID");
@@ -53,7 +54,8 @@ export default function useDMs(): Tools {
 					}
 				})
 				.catch(error => {
-					console.log(error);
+					console.log(error.response.data.message);
+					alert(error.response.data.message);
 				});
 		}
 
