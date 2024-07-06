@@ -51,8 +51,6 @@ export default function LeftPanel() {
 		setSettingsPage(curr_url.includes("/settings"));
 	}, [curr_url]);
 
-	console.log(activeUsers);
-
 	return !settingsPage && !DMRequestSelected ? (
 		<div className="border border-blue-500 h-screen w-1/4 bg-slate-800">
 			<div className="w-full h-24 bg-slate-800 relative">
@@ -134,7 +132,10 @@ export default function LeftPanel() {
 						<FontAwesomeIcon
 							icon={faPlus}
 							className="text-lg text-white rounded-lg border border-green-400 p-1 w-5 bg-green-800 hover:cursor-pointer active:bg-green-900"
-							onClick={() => addUserContact(enteredUID)}
+							onClick={() => {
+								addUserContact(enteredUID);
+								setEnteredUID("");
+							}}
 						/>
 					</>
 				)}
