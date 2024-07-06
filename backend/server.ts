@@ -7,11 +7,14 @@ import auth_router from "./routes/authentication";
 import mongoose from "mongoose";
 import user_router from "./routes/user";
 import contact_router from "./routes/contact";
+import http from "http";
+import socketServer from "./socket-server";
 
 dotenv.config();
 colors.enable();
 
 const app = express();
+const server = http.createServer(app);
 
 const corsOptions = {
 	origin: "http://localhost:5173",
@@ -34,7 +37,9 @@ const MONGO_URI: string = process.env.MONGO_URI!;
 mongoose
 	.connect(MONGO_URI)
 	.then(() => {
-		app.listen(PORT, () => {
+		socketServer(server);
+
+		server.listen(PORT, () => {
 			console.log(
 				`Successfully connected to MongoDB! Server listening on port ${PORT}`
 					.magenta.bold
