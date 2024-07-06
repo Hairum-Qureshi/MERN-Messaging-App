@@ -32,15 +32,5 @@ export default function useSocketIO(): SocketTools {
 		};
 	}, [userData]);
 
-	// useEffect(() => {
-	// 	socket.current.on("get-active-users", (onlineUsers: SocketData[]) => {
-	// 		const filteredOnlineUsers: SocketData[] = onlineUsers.filter(
-	// 			(socketData: SocketData) => socketData.user_id !== userData?._id
-	// 		);
-
-	// 		setActiveUsers(filteredOnlineUsers);
-	// 	});
-	// }, []);
-
 	return { activeUsers };
 }
