@@ -15,6 +15,7 @@ import useAuthContext from "../../../contexts/authContext";
 import useDMs from "../../../hooks/useDMs";
 import ContactBlock from "../ContactBlock";
 import { Contact, User } from "../../../interfaces";
+import useSocketIO from "../../../hooks/useSocketIO";
 
 // TODO
 // Design the DM Requests layout
@@ -37,6 +38,7 @@ export default function LeftPanel() {
 
 	const { userData } = useAuthContext()!;
 	const { addUserContact, userContacts } = useDMs();
+	const { activeUsers } = useSocketIO();
 
 	function updatePageStatus(page: string) {
 		page === "dm_request"
@@ -48,6 +50,8 @@ export default function LeftPanel() {
 		setDMRequestSelected(curr_url.includes("/dm-requests"));
 		setSettingsPage(curr_url.includes("/settings"));
 	}, [curr_url]);
+
+	console.log(activeUsers);
 
 	return !settingsPage && !DMRequestSelected ? (
 		<div className="border border-blue-500 h-screen w-1/4 bg-slate-800">
@@ -63,7 +67,7 @@ export default function LeftPanel() {
 							<h1 className="text-slate-300 text-sm">{userData?.full_name}</h1>
 							<p className="text-xs text-purple-400 font-semibold ">
 								{userData?.status_update ||
-									"Insert some wacky user status here"}
+									"Insert some wacky user status here!"}
 							</p>
 						</div>
 						<Link
@@ -136,7 +140,7 @@ export default function LeftPanel() {
 				)}
 			</div>
 			<div className="w-full h-4/5 overflow-scroll">
-				{userContacts.length === 1 ? (
+				{userContacts[0]?.contacts.length === 0 ? (
 					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
 						<h1>
 							You currently have no contacts. Send a DM request by clicking the
@@ -146,7 +150,11 @@ export default function LeftPanel() {
 				) : (
 					userContacts.map((contactData: Contact) =>
 						contactData.contacts.map((contact: User) => (
-							<ContactBlock contactData={contact} key={contact._id} />
+							<ContactBlock
+								contactData={contact}
+								key={contact._id}
+								activeUsers={activeUsers}
+							/>
 						))
 					)
 				)}
