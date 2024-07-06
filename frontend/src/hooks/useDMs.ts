@@ -1,6 +1,7 @@
 import axios from "axios";
-import { Contact, User } from "../interfaces";
+import { Contact } from "../interfaces";
 import { useEffect, useState } from "react";
+import useAuthContext from "../contexts/authContext";
 
 interface Tools {
 	addUserContact: (user_id: string) => void;
@@ -9,10 +10,11 @@ interface Tools {
 
 export default function useDMs(): Tools {
 	const [userContacts, setUserContacts] = useState<Contact[]>([]);
+	const { userData } = useAuthContext()!;
 
-	function addUserContact(user_id: string) {
+	async function addUserContact(user_id: string) {
 		if (user_id) {
-			axios
+			await axios
 				.post(
 					"http://localhost:3000/api/contacts/add",
 					{
@@ -23,7 +25,11 @@ export default function useDMs(): Tools {
 					}
 				)
 				.then(response => {
-					setUserContacts(prev => [response.data, ...prev]);
+					if (response.data.length > 0) {
+						response.data.map((contact: Contact) => {
+							setUserContacts(prev => [contact, ...prev]);
+						});
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -34,14 +40,14 @@ export default function useDMs(): Tools {
 	}
 
 	useEffect(() => {
-		function getUserContacts() {
-			axios
+		async function getUserContacts() {
+			await axios
 				.get("http://localhost:3000/api/contacts/all", {
 					withCredentials: true
 				})
 				.then(response => {
 					if (response.data.length > 0) {
-						response.data.map((contact: User) => {
+						response.data.map((contact: Contact) => {
 							setUserContacts([contact]);
 						});
 					}
@@ -52,7 +58,7 @@ export default function useDMs(): Tools {
 		}
 
 		getUserContacts();
-	}, []);
+	}, [userData?._id]);
 
 	return { addUserContact, userContacts };
 }
