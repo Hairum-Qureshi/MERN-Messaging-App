@@ -9,7 +9,7 @@ const userSchema = new Schema(
 		profile_picture: {
 			type: String,
 			default:
-				"https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg"
+				"https://i.pinimg.com/originals/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
 		},
 		email: {
 			type: String,
@@ -22,7 +22,7 @@ const userSchema = new Schema(
 		status_update: {
 			type: String
 		},
-		bio: {
+		biography: {
 			type: String,
 			default: "This user currently does not have a bio written",
 			trim: true
