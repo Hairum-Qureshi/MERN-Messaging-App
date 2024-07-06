@@ -9,11 +9,12 @@ interface SocketData {
 let onlineUsers: SocketData[] = [];
 
 function addUser(user_id: string, socket_id: string) {
-	if (!onlineUsers.some((user: SocketData) => user.user_id === user_id)) {
+	if (
+		user_id &&
+		!onlineUsers.some((user: SocketData) => user.user_id === user_id)
+	) {
 		onlineUsers.push({ user_id, socket_id });
 	}
-
-	return;
 }
 
 function removeUser(socket_id: string) {
@@ -34,15 +35,17 @@ const initializeSocket = (server: HttpServer) => {
 	});
 
 	io.on("connection", (socket: Socket) => {
-		console.log("A user connected", socket.id);
+		console.log("A user connected!".cyan);
 
 		socket.on("add-active-user", (user_id: string) => {
 			addUser(user_id, socket.id);
+			io.emit("get-active-users", onlineUsers);
 		});
 
 		socket.on("disconnect", () => {
-			console.log("A user disconnected");
+			console.log("A user disconnected".red);
 			removeUser(socket.id);
+			io.emit("get-active-users", onlineUsers);
 		});
 	});
 
