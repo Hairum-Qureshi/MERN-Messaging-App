@@ -1,4 +1,3 @@
-import Contact from "../ContactBlock";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faGear,
@@ -13,6 +12,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Settings from "./sub-panels/Settings";
 import useAuthContext from "../../../contexts/authContext";
+import useDMs from "../../../hooks/useDMs";
+import ContactBlock from "../ContactBlock";
+import { Contact, User } from "../../../interfaces";
 
 // TODO
 // Design the DM Requests layout
@@ -31,10 +33,10 @@ export default function LeftPanel() {
 	const [DMRequestSelected, setDMRequestSelected] = useState(false);
 	const [settingsPage, setSettingsPage] = useState(false);
 	const [addUserMode, setAddUserMode] = useState(false);
+	const [enteredUID, setEnteredUID] = useState("");
 
 	const { userData } = useAuthContext()!;
-
-	console.log(userData);
+	const { addUserContact, userContacts } = useDMs();
 
 	function updatePageStatus(page: string) {
 		page === "dm_request"
@@ -122,22 +124,32 @@ export default function LeftPanel() {
 							type="text"
 							placeholder="Add user by ID"
 							className="bg-slate-900 w-full outline-none p-2"
+							value={enteredUID}
+							onChange={e => setEnteredUID(e.target.value)}
 						/>
 						<FontAwesomeIcon
 							icon={faPlus}
 							className="text-lg text-white rounded-lg border border-green-400 p-1 w-5 bg-green-800 hover:cursor-pointer active:bg-green-900"
+							onClick={() => addUserContact(enteredUID)}
 						/>
 					</>
 				)}
 			</div>
 			<div className="w-full h-4/5 overflow-scroll">
-				<div className="p-5 text-xl text-slate-400 font-semibold text-center">
-					<h1>
-						You currently have no contacts. Send a DM request by clicking the
-						blue 'create conversation' button!
-					</h1>
-				</div>
-				{/* <Contact /> */}
+				{userContacts.length === 1 ? (
+					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
+						<h1>
+							You currently have no contacts. Send a DM request by clicking the
+							blue 'create conversation' button!
+						</h1>
+					</div>
+				) : (
+					userContacts.map((contactData: Contact) =>
+						contactData.contacts.map((contact: User) => (
+							<ContactBlock contactData={contact} key={contact._id} />
+						))
+					)
+				)}
 			</div>
 		</div>
 	) : DMRequestSelected ? (
