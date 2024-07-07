@@ -2,7 +2,7 @@ import mongoose, { InferSchemaType, Schema, model } from "mongoose";
 
 const conversationSchema = new Schema(
 	{
-		chatName: {
+		groupChatName: {
 			type: String,
 			trim: true
 		},

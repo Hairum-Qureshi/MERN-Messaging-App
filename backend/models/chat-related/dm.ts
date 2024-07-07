@@ -21,11 +21,11 @@ const dmSchema = new Schema(
 		message: {
 			type: String,
 			ref: "Message"
-		},
-		conversation_ID: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Conversation"
 		}
+		// conversation_ID: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: "Conversation"
+		// }
 	},
 	{
 		timestamps: true
