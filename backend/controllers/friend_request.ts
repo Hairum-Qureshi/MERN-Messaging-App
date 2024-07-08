@@ -65,8 +65,15 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 			receiver: user_id
 		});
 
+		const getCreatedFriendRequest = await FriendRequest.findById({
+			_id: createdFriendRequest._id
+		}).populate({
+			path: "receiver",
+			select: "_id profile_picture full_name profile_picture status_update"
+		});
+
 		console.log("Friend request created!");
-		return res.status(200).json(createdFriendRequest);
+		return res.status(200).json(getCreatedFriendRequest);
 	} catch (error) {
 		console.log("<friend_request.ts> controller", (error as Error).toString());
 		return res
@@ -76,6 +83,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 };
 
 const getFriendRequests = async (req: Request, res: Response) => {
+	// Friend requests OTHERS have sent
 	try {
 		const curr_uid: string = req.cookies.decoded_uid;
 		const pendingFR = await FriendRequest.find({
@@ -85,7 +93,10 @@ const getFriendRequests = async (req: Request, res: Response) => {
 				path: "sender",
 				select: "_id full_name profile_picture status_update"
 			})
-			.select("sender");
+			.select("sender")
+			.sort({
+				createdAt: -1
+			});
 		return res.status(200).json(pendingFR);
 	} catch (error) {
 		console.log(
@@ -96,6 +107,7 @@ const getFriendRequests = async (req: Request, res: Response) => {
 };
 
 const getAllPendingFriendRequests = async (req: Request, res: Response) => {
+	// Friend Requests YOU sent
 	try {
 		const curr_uid: string = req.cookies.decoded_uid;
 
@@ -108,7 +120,10 @@ const getAllPendingFriendRequests = async (req: Request, res: Response) => {
 				path: "receiver",
 				select: "_id full_name profile_picture status_update"
 			})
-			.select("receiver");
+			.select("receiver")
+			.sort({
+				createdAt: -1
+			});
 
 		if (pendingRequests && pendingRequests.length > 0) {
 			return res.status(200).json(pendingRequests);
