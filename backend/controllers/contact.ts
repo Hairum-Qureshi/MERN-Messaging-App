@@ -3,66 +3,81 @@ import User from "../models/user";
 import mongoose from "mongoose";
 import colors from "colors";
 import Conversation from "../models/chat-related/conversation";
+import FriendRequest from "../models/friend_request";
 
 colors.enable();
 
 const sendFriendRequest = async (req: Request, res: Response) => {
 	const { user_id } = req.body;
-	// try {
-	// const curr_uid: string = req.cookies.decoded_uid;
 
-	// 	if (mongoose.isValidObjectId(user_id)) {
-	// 		if (user_id === curr_uid) {
-	// 			return res
-	// 				.status(400)
-	// 				.json({ message: "You can't add yourself as a contact" });
-	// 		} else {
-	// 			const findUserByUID = await User.findById({ _id: user_id });
-	// 			if (findUserByUID) {
-	// 				// Check if the current user already has a contact with this specific user
-	// const checkHasContact = await Contact.find({
-	// 	user_id: curr_uid,
-	// 	contacts: {
-	// 		$in: [user_id]
-	// 	}
-	// });
-	// 				if (checkHasContact.length > 0) {
-	// 					return res
-	// 						.status(400)
-	// 						.json({ message: "You already have a contact with this user" });
-	// 				} else {
-	// 					// Add the user ID to the current user's contact 'contacts' array
-	// 					const updatedContact = await Contact.findOneAndUpdate(
-	// 						{ user_id: curr_uid },
-	// 						{
-	// 							$push: {
-	// 								contacts: user_id
-	// 							}
-	// 						},
-	// 						{ new: true }
-	// 					)
-	// 						.populate({
-	// 							path: "contacts",
-	// 							select: "-password -__v"
-	// 						})
-	// 						.select("-_id contacts");
-	// 					return res.status(200).json([updatedContact]);
-	// 				}
-	// 			} else {
-	// 				res
-	// 					.status(404)
-	// 					.json({ message: `User not found with ID: ${user_id}` });
-	// 			}
-	// 		}
-	// 	} else {
-	// 		res.status(400).json({ message: "Invalid user ID" });
-	// 	}
-	// } catch (error) {
-	// 	console.log(
-	// 		"<contact.ts> controller".yellow.bold,
-	// 		(error as Error).toString().red.bold
-	// 	);
-	// }
+	// TODO -
+	// - first need to check if the UID passed in is valid
+	// 	 - if it is, need to check if the current user already has the user as a friend
+	// 	   - if they do not, send the friend request
+	//     - if they do, then do not
+	// Will need to check if they already have a pending friend request
+
+	try {
+		const curr_uid: string = req.cookies.decoded_uid;
+
+		if (mongoose.isValidObjectId(user_id)) {
+			if (user_id === curr_uid) {
+				return res.status(400).json({
+					message: "You cannot add yourself as a friend!"
+				});
+			}
+		} else {
+			const findUserByUID = await User.findById({ _id: user_id });
+			if (findUserByUID) {
+				// need to check if the current user already has them as a friend
+				const findFriend = await User.findOne({
+					_id: curr_uid,
+					friends: { $elemMatch: { $eq: user_id } }
+				});
+
+				if (findFriend) {
+					return res.status(400).json({
+						message: "You already have this user as a friend"
+					});
+				} else {
+					const findPendingRequest = await FriendRequest.findOne({
+						$and: [{ sender: curr_uid }, { receiver: user_id }]
+					});
+
+					if (findPendingRequest) {
+						return res.status(400).json({
+							message:
+								"You already have a pending friend request with this user"
+						});
+					} else {
+						console.log("Friend request created!".yellow);
+						await FriendRequest.create({
+							sender: curr_uid,
+							receiver: user_id
+						})
+							.then(() => {
+								return res.status(200).json({
+									message: "Friend request sent!"
+								});
+							})
+							.catch(error => {
+								console.log("<contact.ts> controller", error.red.bold);
+								return res.status(500).json(error);
+							});
+					}
+				}
+			} else {
+				return res.status(404).json({
+					message: "User not found!"
+				});
+			}
+		}
+	} catch (error) {
+		console.log(
+			"<contact.ts> controller".yellow.bold,
+			(error as Error).toString().red.bold
+		);
+	}
 };
 
 const getContacts = async (req: Request, res: Response) => {
