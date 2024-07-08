@@ -74,6 +74,10 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 const getFriendRequests = async (req: Request, res: Response) => {
 	try {
 		const curr_uid: string = req.cookies.decoded_uid;
+		const pendingFR = await FriendRequest.find({
+			receiver: curr_uid
+		});
+		return res.status(200).json(pendingFR);
 	} catch (error) {
 		console.log(
 			"<contact.ts> controller".yellow.bold,
