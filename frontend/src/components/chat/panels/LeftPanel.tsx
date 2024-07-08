@@ -5,6 +5,7 @@ import {
 	faMagnifyingGlass,
 	faPenToSquare,
 	faPlus,
+	faUser,
 	faX
 } from "@fortawesome/free-solid-svg-icons";
 import DMRequests from "./sub-panels/dms/DMRequests";
@@ -29,7 +30,11 @@ import useSocketIO from "../../../hooks/useSocketIO";
 // --> if a user deletes a conversation between another user, it removes them from the array of 'members'
 //		--> if the other user sends a message in the conversation, it re-adds the other user and therefore will show up for them
 
-export default function LeftPanel() {
+interface Props {
+	retrieveSelectedUser: (user_data: User) => void;
+}
+
+export default function LeftPanel({ retrieveSelectedUser }: Props) {
 	const curr_url = window.location.href;
 	const [DMRequestSelected, setDMRequestSelected] = useState(false);
 	const [settingsPage, setSettingsPage] = useState(false);
@@ -52,7 +57,7 @@ export default function LeftPanel() {
 	}, [curr_url]);
 
 	return !settingsPage && !DMRequestSelected ? (
-		<div className="border border-blue-500 h-screen w-1/4 bg-slate-800">
+		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800">
 			<div className="w-full h-24 bg-slate-800 relative">
 				<div className="m-3">
 					<div className="flex items-center">
@@ -94,6 +99,15 @@ export default function LeftPanel() {
 							onClick={() => setAddUserMode(false)}
 						/>
 					)}
+					<Link
+						to="/conversations/friend-requests"
+						className="text-xl border border-orange-400 p-1 bg-yellow-600 rounded hover:cursor-pointer active:bg-orange-700 mr-3"
+					>
+						<FontAwesomeIcon
+							icon={faUser}
+							className="flex items-center justify-center"
+						/>
+					</Link>
 					<Link
 						to="/conversations/dm-requests"
 						className="text-xl border border-green-400 p-1 bg-green-800 rounded hover:cursor-pointer active:bg-green-700"
@@ -140,7 +154,7 @@ export default function LeftPanel() {
 					</>
 				)}
 			</div>
-			<div className="w-full h-4/5 overflow-scroll">
+			<div className="w-full h-4/5 overflow-auto">
 				{userContacts[0]?.contacts.length === 0 ? (
 					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
 						<h1>
@@ -149,15 +163,17 @@ export default function LeftPanel() {
 						</h1>
 					</div>
 				) : (
-					userContacts.map((contactData: Contact) =>
-						contactData.contacts.map((contact: User) => (
-							<ContactBlock
-								contactData={contact}
-								key={contact._id}
-								activeUsers={activeUsers}
-							/>
-						))
-					)
+					// userContacts.map((contactData: Contact) =>
+					// 	contactData.contacts.map((contact: User) => (
+					// 		<ContactBlock
+					// 			contactData={contact}
+					// 			key={contact._id}
+					// 			activeUsers={activeUsers}
+					// 			retrieveSelectedUser={retrieveSelectedUser}
+					// 		/>
+					// 	))
+					// )
+					<div>Contacts Here</div>
 				)}
 			</div>
 		</div>

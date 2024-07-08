@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import useAuthContext from "../contexts/authContext";
 
 interface Tools {
-	addUserContact: (user_id: string) => void;
+	sendFriendRequest: (user_id: string) => void;
 	userContacts: Contact[];
 }
 
@@ -12,7 +12,7 @@ export default function useDMs(): Tools {
 	const [userContacts, setUserContacts] = useState<Contact[]>([]);
 	const { userData } = useAuthContext()!;
 
-	async function addUserContact(user_id: string) {
+	async function sendFriendRequest(user_id: string) {
 		if (user_id) {
 			await axios
 				.post(
@@ -62,5 +62,5 @@ export default function useDMs(): Tools {
 		getUserContacts();
 	}, [userData?._id]);
 
-	return { addUserContact, userContacts };
+	return { sendFriendRequest, userContacts };
 }
