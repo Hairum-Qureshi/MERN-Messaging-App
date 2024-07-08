@@ -50,7 +50,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 								return res.status(200).json(createdFriendRequest);
 							})
 							.catch(error => {
-								console.log("<contact.ts> controller", error.red.bold);
+								console.log("<friend_request.ts> controller", error.red.bold);
 								return res.status(500).json(error);
 							});
 					}
