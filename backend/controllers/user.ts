@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import User from "../models/user";
+import colors from "colors";
+
+colors.enable();
 
 const getCurrentUser = async (req: Request, res: Response) => {
 	const curr_uid: string = req.cookies.decoded_uid;
