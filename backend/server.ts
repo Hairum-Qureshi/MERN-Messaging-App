@@ -9,6 +9,7 @@ import user_router from "./routes/user";
 import friend_request_router from "./routes/friend_request";
 import http from "http";
 import socketServer from "./socket-server";
+import conversation_router from "./routes/conversation";
 
 dotenv.config();
 colors.enable();
@@ -30,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", auth_router);
 app.use("/api/user", user_router);
 app.use("/api/friend-requests", friend_request_router);
+app.use("/api/conversations", conversation_router);
 
 const PORT: string | number = process.env.PORT! || 3000;
 const MONGO_URI: string = process.env.MONGO_URI!;
