@@ -15,8 +15,10 @@ import Settings from "./sub-panels/Settings";
 import useAuthContext from "../../../contexts/authContext";
 import useDMs from "../../../hooks/useDMs";
 import ContactBlock from "../ContactBlock";
-import { Contact, User } from "../../../interfaces";
+import { User } from "../../../interfaces";
 import useSocketIO from "../../../hooks/useSocketIO";
+import FriendRequest from "./sub-panels/friend-request/FriendRequest";
+import PendingFriendRequest from "./sub-panels/friend-request/PendingFriendRequest";
 
 // TODO
 // Design the DM Requests layout
@@ -35,28 +37,45 @@ interface Props {
 }
 
 export default function LeftPanel({ retrieveSelectedUser }: Props) {
-	const curr_url = window.location.href;
 	const [DMRequestSelected, setDMRequestSelected] = useState(false);
 	const [settingsPage, setSettingsPage] = useState(false);
+	const [frPage, setFRPage] = useState(false);
 	const [addUserMode, setAddUserMode] = useState(false);
+	const [pendingFRPage, setPendingFRPage] = useState(false);
 	const [enteredUID, setEnteredUID] = useState("");
 
 	const { userData } = useAuthContext()!;
-	const { addUserContact, userContacts } = useDMs();
+	const { sendFriendRequest, userContacts } = useDMs();
 	const { activeUsers } = useSocketIO();
 
 	function updatePageStatus(page: string) {
 		page === "dm_request"
 			? setDMRequestSelected(false)
-			: setSettingsPage(false);
+			: page === "settings"
+			? setSettingsPage(false)
+			: "friend_request"
+			? setFRPage(false)
+			: setPendingFRPage(false);
 	}
+
+	const curr_url = window.location.href;
 
 	useEffect(() => {
 		setDMRequestSelected(curr_url.includes("/dm-requests"));
 		setSettingsPage(curr_url.includes("/settings"));
+		if (curr_url.includes("/friend-requests/pending")) {
+			setPendingFRPage(true);
+			setFRPage(false);
+		} else if (curr_url.includes("/friend-requests")) {
+			setPendingFRPage(false);
+			setFRPage(true);
+		} else {
+			setPendingFRPage(false);
+			setFRPage(false);
+		}
 	}, [curr_url]);
 
-	return !settingsPage && !DMRequestSelected ? (
+	return !settingsPage && !DMRequestSelected && !frPage && !pendingFRPage ? (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800">
 			<div className="w-full h-24 bg-slate-800 relative">
 				<div className="m-3">
@@ -147,7 +166,7 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 							icon={faPlus}
 							className="text-lg text-white rounded-lg border border-green-400 p-1 w-5 bg-green-800 hover:cursor-pointer active:bg-green-900"
 							onClick={() => {
-								addUserContact(enteredUID);
+								sendFriendRequest(enteredUID);
 								setEnteredUID("");
 							}}
 						/>
@@ -179,7 +198,11 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 		</div>
 	) : DMRequestSelected ? (
 		<DMRequests updatePageStatus={updatePageStatus} />
-	) : (
+	) : settingsPage ? (
 		<Settings updatePageStatus={updatePageStatus} />
+	) : frPage ? (
+		<FriendRequest updatePageStatus={updatePageStatus} />
+	) : (
+		<PendingFriendRequest updatePageStatus={updatePageStatus} />
 	);
 }
