@@ -26,6 +26,14 @@ export interface SocketData {
 
 export interface SocketTools {
 	activeUsers: SocketData[];
+	sendFriendRequestEvent: (
+		sender_uid: string,
+		receiver_uid: string,
+		sender_pfp: string,
+		sender_fullName: string,
+		sender_statusUpdate: string
+	) => void;
+	incomingFriendRequest: FriendRequest | undefined;
 }
 
 export interface SentFriendRequest {
