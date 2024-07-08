@@ -100,7 +100,7 @@ const getAllPendingFriendRequests = async (req: Request, res: Response) => {
 			]
 		});
 
-		if (pendingRequests) {
+		if (pendingRequests && pendingRequests.length > 0) {
 			return res.status(200).json(pendingRequests);
 		} else {
 			return res.status(404).json({
