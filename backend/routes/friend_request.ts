@@ -2,7 +2,8 @@ import express from "express";
 import {
 	sendFriendRequest,
 	getFriendRequests,
-	getAllPendingFriendRequests
+	getAllPendingFriendRequests,
+	acceptFriendRequest
 } from "../controllers/friend_request";
 import { authenticated } from "../middleware/authentication";
 
@@ -13,5 +14,7 @@ router.post("/send", authenticated, sendFriendRequest);
 router.get("/all", authenticated, getFriendRequests);
 
 router.get("/all-sent", authenticated, getAllPendingFriendRequests);
+
+router.post("/accept", authenticated, acceptFriendRequest);
 
 export default router;
