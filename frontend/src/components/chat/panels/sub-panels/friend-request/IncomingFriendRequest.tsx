@@ -4,13 +4,32 @@ import { Link } from "react-router-dom";
 import PendingFRBlock from "./IncomingFRBlock";
 import useFriendRequest from "../../../../../hooks/useFriendRequest";
 import { FriendRequest } from "../../../../../interfaces";
+import { useEffect, useState } from "react";
 
 interface Props {
 	updatePageStatus: (page: string) => void;
 }
 
 export default function FriendRequest({ updatePageStatus }: Props) {
+	const [incomingFriendRequests, setIncomingFriendRequests] = useState<
+		FriendRequest[]
+	>([]);
+
 	const { friendRequests } = useFriendRequest();
+
+	useEffect(() => {
+		setIncomingFriendRequests(friendRequests);
+	}, [friendRequests]);
+
+	function filterFriendRequests(sender_uid: string) {
+		const filteredFR: FriendRequest[] = incomingFriendRequests.filter(
+			(fr: FriendRequest) => {
+				return fr.sender._id !== sender_uid;
+			}
+		);
+
+		setIncomingFriendRequests(filteredFR);
+	}
 
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
@@ -36,14 +55,15 @@ export default function FriendRequest({ updatePageStatus }: Props) {
 				</div>
 			</div>
 			<h1 className="text-2xl font-semibold m-3">
-				Incoming Friend Requests ({friendRequests.length})
+				Incoming Friend Requests ({incomingFriendRequests.length})
 			</h1>
 			<div className="flex-grow overflow-y-auto">
-				{friendRequests.length > 0 ? (
-					friendRequests.map((friendRequest: FriendRequest) => {
+				{incomingFriendRequests.length > 0 ? (
+					incomingFriendRequests.map((friendRequest: FriendRequest) => {
 						return (
 							<PendingFRBlock
 								friendRequest={friendRequest}
+								filterFriendRequests={filterFriendRequests}
 								key={friendRequest._id}
 							/>
 						);
