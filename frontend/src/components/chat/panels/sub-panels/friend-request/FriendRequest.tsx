@@ -10,25 +10,35 @@ interface Props {
 export default function FriendRequest({ updatePageStatus }: Props) {
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
-			<div
-				onClick={() => updatePageStatus("friend_request")}
-				className="text-xl border w-1/3 border-white-400 p-1 bg-slate-500 rounded hover:cursor-pointer active:bg-slate-700 m-4"
-			>
-				<Link to="/conversations">
-					<div className="flex items-center justify-center">
-						<FontAwesomeIcon icon={faArrowLeft} />
-						<span className="ml-2 text-lg">Go Back</span>
-					</div>
-				</Link>
+			<div className="flex items-center">
+				<div
+					onClick={() => updatePageStatus("settings")}
+					className="text-xl border w-1/3 border-white-400 p-1 bg-slate-500 rounded hover:cursor-pointer active:bg-slate-700 m-4"
+				>
+					<Link to="/conversations">
+						<div className="flex items-center justify-center">
+							<FontAwesomeIcon icon={faArrowLeft} />
+							<span className="ml-2 text-lg">Go Back</span>
+						</div>
+					</Link>
+				</div>
+				<div
+					onClick={() => updatePageStatus("pending_friend_requests")}
+					className="text-xl border w-1/3 border-white-400 p-1 bg-blue-500 rounded hover:cursor-pointer active:bg-blue-700 m-4 ml-auto text-center"
+				>
+					<Link to="/conversations/friend-requests/pending">
+						<span className="ml-2 text-lg">Pending FRs</span>
+					</Link>
+				</div>
 			</div>
 			<h1 className="text-2xl font-semibold m-3">Your Friend Requests (1)</h1>
 			<div className="flex-grow overflow-y-auto">
-				<div className="p-5 text-xl text-slate-400 font-semibold text-center">
+				{/* <div className="p-5 text-xl text-slate-400 font-semibold text-center">
 					<h1>
 						It's lonely here! Check back later when you have a friend request
 					</h1>
-				</div>
-				{/* <PendingFRBlock /> */}
+				</div> */}
+				<PendingFRBlock />
 			</div>
 		</div>
 	);

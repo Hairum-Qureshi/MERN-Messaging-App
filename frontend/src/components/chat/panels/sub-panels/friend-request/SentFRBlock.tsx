@@ -1,7 +1,7 @@
 import { faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function PendingFRBlock() {
+export default function SentFRBlock() {
 	return (
 		<div className="w-full border border-sky-600 bg-slate-900 p-2 border-l-4 border-l-blue-300">
 			<div className="flex items-center">
@@ -16,10 +16,8 @@ export default function PendingFRBlock() {
 						Insert some user status here
 					</p>
 				</div>
-				<div className="ml-auto text-xl text-white w-10 text-center bg-green-600 p-1 border rounded-full hover:cursor-pointer hover:bg-green-700 active:bg-green-500">
-					<FontAwesomeIcon icon={faCheck} />
-				</div>
-				<div className="text-xl text-white ml-2 w-10 text-center bg-red-600 p-1 border rounded-full hover:cursor-pointer hover:bg-red-700 active:bg-red-500">
+
+				<div className="text-xl text-white ml-auto w-10 text-center bg-red-600 p-1 border rounded-full hover:cursor-pointer hover:bg-red-700 active:bg-red-500">
 					<FontAwesomeIcon icon={faBan} />
 				</div>
 			</div>
