@@ -6,7 +6,7 @@ import cors from "cors";
 import auth_router from "./routes/authentication";
 import mongoose from "mongoose";
 import user_router from "./routes/user";
-import contact_router from "./routes/contact";
+import friend_request_router from "./routes/friend_request";
 import http from "http";
 import socketServer from "./socket-server";
 
@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", auth_router);
 app.use("/api/user", user_router);
-app.use("/api/contacts", contact_router);
+app.use("/api/friend-requests", friend_request_router);
 
 const PORT: string | number = process.env.PORT! || 3000;
 const MONGO_URI: string = process.env.MONGO_URI!;
