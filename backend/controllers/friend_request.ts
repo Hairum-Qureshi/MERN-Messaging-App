@@ -46,10 +46,8 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 							sender: curr_uid,
 							receiver: user_id
 						})
-							.then(() => {
-								return res.status(200).json({
-									message: "Friend request sent!"
-								});
+							.then(createdFriendRequest => {
+								return res.status(200).json(createdFriendRequest);
 							})
 							.catch(error => {
 								console.log("<contact.ts> controller", error.red.bold);
@@ -76,7 +74,7 @@ const getFriendRequests = async (req: Request, res: Response) => {
 		const curr_uid: string = req.cookies.decoded_uid;
 		const pendingFR = await FriendRequest.find({
 			receiver: curr_uid
-		});
+		}).populate("sender");
 		return res.status(200).json(pendingFR);
 	} catch (error) {
 		console.log(
@@ -98,7 +96,7 @@ const getAllPendingFriendRequests = async (req: Request, res: Response) => {
 					rejected: false
 				}
 			]
-		});
+		}).populate("receiver");
 
 		if (pendingRequests && pendingRequests.length > 0) {
 			return res.status(200).json(pendingRequests);
