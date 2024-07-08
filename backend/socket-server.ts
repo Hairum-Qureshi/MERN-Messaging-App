@@ -42,6 +42,33 @@ const initializeSocket = (server: HttpServer) => {
 			io.emit("get-active-users", onlineUsers);
 		});
 
+		socket.on(
+			"send-friend-request",
+			({
+				sender_uid,
+				receiver_uid,
+				sender_pfp,
+				sender_name,
+				sender_status
+			}) => {
+				const receiverData: SocketData = getUser(receiver_uid);
+				if (receiverData) {
+					const friendRequest = {
+						_id: receiver_uid,
+						sender: {
+							_id: sender_uid,
+							full_name: sender_name,
+							profile_picture: sender_pfp,
+							status_update: sender_status
+						}
+					};
+					socket
+						.to(receiverData.socket_id)
+						.emit("receive-friend-request", friendRequest);
+				}
+			}
+		);
+
 		socket.on("disconnect", () => {
 			console.log("A user disconnected".red);
 			removeUser(socket.id);
