@@ -65,7 +65,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 		}
 	} catch (error) {
 		console.log(
-			"<contact.ts> controller".yellow.bold,
+			"<friend_request.ts> controller".yellow.bold,
 			(error as Error).toString().red.bold
 		);
 	}
@@ -80,12 +80,39 @@ const getFriendRequests = async (req: Request, res: Response) => {
 		return res.status(200).json(pendingFR);
 	} catch (error) {
 		console.log(
-			"<contact.ts> controller".yellow.bold,
+			"<friend_request.ts> controller".yellow.bold,
 			(error as Error).toString().red.bold
 		);
 	}
 };
 
-const getAllPendingFriendRequests = async (req: Request, res: Response) => {};
+const getAllPendingFriendRequests = async (req: Request, res: Response) => {
+	try {
+		const curr_uid: string = req.cookies.decoded_uid;
+
+		const pendingRequests = await FriendRequest.find({
+			sender: curr_uid,
+			$and: [
+				{
+					accepted: false,
+					rejected: false
+				}
+			]
+		});
+
+		if (pendingRequests) {
+			return res.status(200).json(pendingRequests);
+		} else {
+			return res.status(404).json({
+				message: "No pending friend requests found"
+			});
+		}
+	} catch (error) {
+		console.log(
+			"<friend_request.ts> controller".yellow.bold,
+			(error as Error).toString().red.bold
+		);
+	}
+};
 
 export { sendFriendRequest, getFriendRequests, getAllPendingFriendRequests };
