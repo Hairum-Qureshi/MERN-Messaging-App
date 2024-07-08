@@ -2,20 +2,12 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import mongoose from "mongoose";
 import colors from "colors";
-import Conversation from "../models/chat-related/conversation";
 import FriendRequest from "../models/friend_request";
 
 colors.enable();
 
 const sendFriendRequest = async (req: Request, res: Response) => {
 	const { user_id } = req.body;
-
-	// TODO -
-	// - first need to check if the UID passed in is valid
-	// 	 - if it is, need to check if the current user already has the user as a friend
-	// 	   - if they do not, send the friend request
-	//     - if they do, then do not
-	// Will need to check if they already have a pending friend request
 
 	try {
 		const curr_uid: string = req.cookies.decoded_uid;
@@ -29,7 +21,6 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 		} else {
 			const findUserByUID = await User.findById({ _id: user_id });
 			if (findUserByUID) {
-				// need to check if the current user already has them as a friend
 				const findFriend = await User.findOne({
 					_id: curr_uid,
 					friends: { $elemMatch: { $eq: user_id } }
@@ -80,7 +71,7 @@ const sendFriendRequest = async (req: Request, res: Response) => {
 	}
 };
 
-const getContacts = async (req: Request, res: Response) => {
+const getFriendRequests = async (req: Request, res: Response) => {
 	// const curr_uid: string = req.cookies.decoded_uid;
 	// try {
 	// 	const contacts = await Contact.find({ user_id: curr_uid })
@@ -98,4 +89,4 @@ const getContacts = async (req: Request, res: Response) => {
 	// }
 };
 
-export { sendFriendRequest, getContacts };
+export { sendFriendRequest, getFriendRequests };
