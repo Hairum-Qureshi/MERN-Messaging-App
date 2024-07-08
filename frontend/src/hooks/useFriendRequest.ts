@@ -1,6 +1,8 @@
 import axios from "axios";
 import { FriendRequest, SentFriendRequest } from "../interfaces";
 import { useEffect, useState } from "react";
+import useSocketIO from "./useSocketIO";
+import useAuthContext from "../contexts/authContext";
 
 interface Tools {
 	sendFriendRequest: (user_id: string) => void;
@@ -13,6 +15,8 @@ export default function useFriendRequest(): Tools {
 		SentFriendRequest[]
 	>([]);
 	const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+	const { sendFriendRequestEvent, incomingFriendRequest } = useSocketIO();
+	const { userData } = useAuthContext()!;
 
 	async function sendFriendRequest(user_id: string) {
 		if (user_id) {
@@ -27,7 +31,16 @@ export default function useFriendRequest(): Tools {
 					}
 				)
 				.then(response => {
-					setSentFriendRequests(prev => [response.data, ...prev]);
+					if (userData && response.status === 200) {
+						setSentFriendRequests(prev => [response.data, ...prev]);
+						sendFriendRequestEvent(
+							userData._id!,
+							response.data.receiver._id,
+							userData.profile_picture!,
+							userData.full_name!,
+							userData.status_update!
+						);
+					}
 				})
 				.catch(error => {
 					console.log(error);
@@ -69,6 +82,12 @@ export default function useFriendRequest(): Tools {
 		getFriendRequests();
 		getSentFriendRequests();
 	}, []);
+
+	useEffect(() => {
+		if (incomingFriendRequest) {
+			setFriendRequests(prev => [incomingFriendRequest, ...prev]);
+		}
+	}, [incomingFriendRequest]);
 
 	return { sendFriendRequest, friendRequests, sentFriendRequests };
 }
