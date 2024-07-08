@@ -3,6 +3,7 @@ import User from "../models/user";
 import mongoose from "mongoose";
 import colors from "colors";
 import FriendRequest from "../models/friend_request";
+import Conversation from "../models/chat-related/conversation";
 
 colors.enable();
 
@@ -140,4 +141,47 @@ const getAllPendingFriendRequests = async (req: Request, res: Response) => {
 	}
 };
 
-export { sendFriendRequest, getFriendRequests, getAllPendingFriendRequests };
+const acceptFriendRequest = async (req: Request, res: Response) => {
+	const { sender_uid } = req.body;
+	try {
+		const curr_uid: string = req.cookies.decoded_uid;
+		// Create a Conversation contact with these two users now that they're friends
+		const conversation = await Conversation.create({
+			members: [sender_uid, curr_uid]
+		});
+
+		// Delete the friend request
+		await FriendRequest.deleteOne({
+			sender: sender_uid,
+			receiver: curr_uid
+		});
+
+		// Add sender_uid to the current user's friends array
+		await User.findByIdAndUpdate(curr_uid, {
+			$addToSet: {
+				friends: sender_uid
+			}
+		});
+
+		// Add curr_uid to the sender's friends array
+		await User.findByIdAndUpdate(sender_uid, {
+			$addToSet: {
+				friends: curr_uid
+			}
+		});
+
+		res.status(201).send(conversation);
+	} catch (error) {
+		console.log(
+			"<friend_request.ts> controller".yellow.bold,
+			(error as Error).toString().red.bold
+		);
+	}
+};
+
+export {
+	sendFriendRequest,
+	getFriendRequests,
+	getAllPendingFriendRequests,
+	acceptFriendRequest
+};
