@@ -9,6 +9,14 @@ const friendRequestSchema = new Schema(
 		receiver: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User"
+		},
+		accepted: {
+			type: Boolean,
+			default: false
+		},
+		rejected: {
+			type: Boolean,
+			default: false
 		}
 	},
 	{
