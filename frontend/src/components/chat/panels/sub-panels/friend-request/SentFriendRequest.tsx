@@ -2,12 +2,16 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import SentFRBlock from "./SentFRBlock";
+import useFriendRequest from "../../../../../hooks/useFriendRequest";
+import { SentFriendRequest } from "../../../../../interfaces";
 
 interface Props {
 	updatePageStatus: (page: string) => void;
 }
 
 export default function PendingFriendRequest({ updatePageStatus }: Props) {
+	const { sentFriendRequests } = useFriendRequest();
+
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
 			<div
@@ -23,10 +27,26 @@ export default function PendingFriendRequest({ updatePageStatus }: Props) {
 			</div>
 
 			<h1 className="text-2xl font-semibold m-3">
-				Your Pending Friend Requests
+				Sent Friend Requests (
+				{sentFriendRequests.length >= 9 ? "9+" : sentFriendRequests.length})
 			</h1>
 			<div className="flex-grow overflow-y-auto">
-				<SentFRBlock />
+				{sentFriendRequests.length > 0 ? (
+					sentFriendRequests.map((sentFriendRequest: SentFriendRequest) => {
+						return (
+							<SentFRBlock
+								sentFriendRequest={sentFriendRequest}
+								key={sentFriendRequest._id}
+							/>
+						);
+					})
+				) : (
+					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
+						<h1>
+							It's lonely here! Check back later when you have a friend request
+						</h1>
+					</div>
+				)}
 			</div>
 		</div>
 	);

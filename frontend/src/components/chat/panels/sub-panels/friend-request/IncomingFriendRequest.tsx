@@ -1,13 +1,17 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import PendingFRBlock from "./PendingFRBlock";
+import PendingFRBlock from "./IncomingFRBlock";
+import useFriendRequest from "../../../../../hooks/useFriendRequest";
+import { FriendRequest } from "../../../../../interfaces";
 
 interface Props {
 	updatePageStatus: (page: string) => void;
 }
 
 export default function FriendRequest({ updatePageStatus }: Props) {
+	const { friendRequests } = useFriendRequest();
+
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
 			<div className="flex items-center">
@@ -31,14 +35,26 @@ export default function FriendRequest({ updatePageStatus }: Props) {
 					</Link>
 				</div>
 			</div>
-			<h1 className="text-2xl font-semibold m-3">Your Friend Requests (1)</h1>
+			<h1 className="text-2xl font-semibold m-3">
+				Incoming Friend Requests ({friendRequests.length})
+			</h1>
 			<div className="flex-grow overflow-y-auto">
-				{/* <div className="p-5 text-xl text-slate-400 font-semibold text-center">
-					<h1>
-						It's lonely here! Check back later when you have a friend request
-					</h1>
-				</div> */}
-				<PendingFRBlock />
+				{friendRequests.length > 0 ? (
+					friendRequests.map((friendRequest: FriendRequest) => {
+						return (
+							<PendingFRBlock
+								friendRequest={friendRequest}
+								key={friendRequest._id}
+							/>
+						);
+					})
+				) : (
+					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
+						<h1>
+							It's lonely here! Check back later when you have a friend request
+						</h1>
+					</div>
+				)}
 			</div>
 		</div>
 	);
