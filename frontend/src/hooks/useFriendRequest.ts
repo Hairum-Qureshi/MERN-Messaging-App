@@ -8,6 +8,7 @@ interface Tools {
 	sendFriendRequest: (user_id: string) => void;
 	sentFriendRequests: SentFriendRequest[];
 	friendRequests: FriendRequest[];
+	acceptIncomingFriendRequest: (sender_uid: string) => void;
 }
 
 export default function useFriendRequest(): Tools {
@@ -89,5 +90,29 @@ export default function useFriendRequest(): Tools {
 		}
 	}, [incomingFriendRequest]);
 
-	return { sendFriendRequest, friendRequests, sentFriendRequests };
+	async function acceptIncomingFriendRequest(sender_uid: string) {
+		axios
+			.post(
+				"http://localhost:3000/api/friend-requests/accept",
+				{
+					sender_uid
+				},
+				{
+					withCredentials: true
+				}
+			)
+			.then(response => console.log(response.data))
+			.catch(error => console.log(error));
+	}
+
+	useEffect(() => {
+		console.log(friendRequests);
+	}, [friendRequests]);
+
+	return {
+		sendFriendRequest,
+		friendRequests,
+		sentFriendRequests,
+		acceptIncomingFriendRequest
+	};
 }
