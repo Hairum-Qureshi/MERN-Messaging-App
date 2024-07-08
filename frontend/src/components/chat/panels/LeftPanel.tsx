@@ -19,6 +19,7 @@ import { User } from "../../../interfaces";
 import useSocketIO from "../../../hooks/useSocketIO";
 import FriendRequest from "./sub-panels/friend-request/FriendRequest";
 import PendingFriendRequest from "./sub-panels/friend-request/PendingFriendRequest";
+import useFriendRequest from "../../../hooks/useFriendRequest";
 
 // TODO
 // Design the DM Requests layout
@@ -45,7 +46,8 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 	const [enteredUID, setEnteredUID] = useState("");
 
 	const { userData } = useAuthContext()!;
-	const { sendFriendRequest, userContacts } = useDMs();
+	const { userContacts } = useDMs();
+	const { sendFriendRequest } = useFriendRequest();
 	const { activeUsers } = useSocketIO();
 
 	function updatePageStatus(page: string) {
