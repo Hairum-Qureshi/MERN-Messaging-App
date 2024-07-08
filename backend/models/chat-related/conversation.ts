@@ -14,9 +14,6 @@ const conversationSchema = new Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User"
 		},
-		recipient: {
-			type: mongoose.Schema.Types.ObjectId
-		},
 		latestMessage: {
 			type: String,
 			ref: "Message",

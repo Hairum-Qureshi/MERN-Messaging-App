@@ -30,6 +30,11 @@ const userSchema = new Schema(
 		blocked_users: {
 			type: [mongoose.Schema.Types.ObjectId],
 			default: []
+		},
+		friends: {
+			type: [mongoose.Schema.Types.ObjectId],
+			default: [],
+			ref: "User"
 		}
 	},
 	{ timestamps: true }
