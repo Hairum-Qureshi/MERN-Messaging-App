@@ -13,14 +13,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Settings from "./sub-panels/Settings";
 import useAuthContext from "../../../contexts/authContext";
-import useDMs from "../../../hooks/useDMs";
 import ContactBlock from "../ContactBlock";
-import { Conversation, ShortUser, User } from "../../../interfaces";
+import { Conversation, ShortUser } from "../../../interfaces";
 import useSocketIO from "../../../hooks/useSocketIO";
 import FriendRequest from "./sub-panels/friend-request/IncomingFriendRequest";
 import SentFriendRequest from "./sub-panels/friend-request/SentFriendRequest";
 import useFriendRequest from "../../../hooks/useFriendRequest";
 import useConversation from "../../../hooks/useConversation";
+import useSettings from "../../../hooks/useSettings";
 
 // TODO
 // Design the DM Requests layout
@@ -28,7 +28,6 @@ import useConversation from "../../../hooks/useConversation";
 // Add a settings button
 //	--> within settings:
 //		- add a count of how many friends and contacts the user has
-// 		- add a biography section
 //		- add the ability for users to change their profile pictures
 // The delete feature:
 // --> if a user deletes a conversation between another user, it removes them from the array of 'members'
@@ -47,10 +46,10 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 	const [enteredUID, setEnteredUID] = useState("");
 
 	const { userData } = useAuthContext()!;
-	const { userContacts } = useDMs();
 	const { sendFriendRequest } = useFriendRequest();
 	const { conversations } = useConversation();
-	const { activeUsers } = useSocketIO();
+	const { checkCurrentUserStatusUpdate } = useSettings();
+	const { activeUsers, statusUpdateData } = useSocketIO();
 
 	function updatePageStatus(page: string) {
 		page === "dm_request"
@@ -92,8 +91,11 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 						<div className="text-base ml-3">
 							<h1 className="text-slate-300 text-sm">{userData?.full_name}</h1>
 							<p className="text-xs text-purple-400 font-semibold ">
-								{userData?.status_update ||
-									"Insert some wacky user status here!"}
+								{statusUpdateData && statusUpdateData.length > 0
+									? checkCurrentUserStatusUpdate() ||
+									  userData?.status_update ||
+									  "Insert some wacky user status here!"
+									: userData?.status_update}
 							</p>
 						</div>
 						<Link
@@ -198,6 +200,7 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 											contactData={contactData}
 											activeUsers={activeUsers}
 											latestMessage={conversation.latestMessage}
+											statusUpdateData={statusUpdateData}
 											key={conversation._id}
 										/>
 									</Link>
