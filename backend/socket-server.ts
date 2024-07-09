@@ -1,5 +1,8 @@
 import { Server as HttpServer } from "http";
 import { Server as IOServer, Socket } from "socket.io";
+import colors from "colors";
+
+colors.enable();
 
 interface SocketData {
 	user_id: string;
