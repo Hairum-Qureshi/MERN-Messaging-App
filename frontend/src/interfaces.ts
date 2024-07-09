@@ -12,7 +12,7 @@ export interface User {
 export interface ShortUser {
 	_id: string;
 	profile_picture: string;
-	biography: string;
+	biography?: string;
 	full_name: string;
 	status_update?: string;
 }
