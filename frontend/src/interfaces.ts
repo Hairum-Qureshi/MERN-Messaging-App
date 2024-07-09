@@ -9,6 +9,14 @@ export interface User {
 	createdAt?: string;
 }
 
+export interface ShortUser {
+	_id: string;
+	profile_picture: string;
+	biography: string;
+	full_name: string;
+	status_update?: string;
+}
+
 export interface AuthContextProps {
 	children: React.ReactNode;
 }
@@ -56,4 +64,19 @@ export interface FriendRequest {
 		profile_picture: string;
 		status_update?: string;
 	};
+}
+
+export interface Conversation {
+	_id: string;
+	groupChatName?: string;
+	isGroupChat?: boolean;
+	members: [
+		{
+			_id: string;
+			full_name: string;
+			profile_picture: string;
+		}
+	];
+	latestMessage: string;
+	groupChatPhoto?: string;
 }
