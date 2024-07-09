@@ -15,11 +15,12 @@ import Settings from "./sub-panels/Settings";
 import useAuthContext from "../../../contexts/authContext";
 import useDMs from "../../../hooks/useDMs";
 import ContactBlock from "../ContactBlock";
-import { User } from "../../../interfaces";
+import { Conversation, ShortUser, User } from "../../../interfaces";
 import useSocketIO from "../../../hooks/useSocketIO";
-import FriendRequest from "./sub-panels/friend-request/FriendRequest";
-import PendingFriendRequest from "./sub-panels/friend-request/PendingFriendRequest";
+import FriendRequest from "./sub-panels/friend-request/IncomingFriendRequest";
+import SentFriendRequest from "./sub-panels/friend-request/SentFriendRequest";
 import useFriendRequest from "../../../hooks/useFriendRequest";
+import useConversation from "../../../hooks/useConversation";
 
 // TODO
 // Design the DM Requests layout
@@ -48,6 +49,7 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 	const { userData } = useAuthContext()!;
 	const { userContacts } = useDMs();
 	const { sendFriendRequest } = useFriendRequest();
+	const { conversations } = useConversation();
 	const { activeUsers } = useSocketIO();
 
 	function updatePageStatus(page: string) {
@@ -176,7 +178,7 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 				)}
 			</div>
 			<div className="w-full h-4/5 overflow-auto">
-				{userContacts[0]?.contacts.length === 0 ? (
+				{conversations.length === 0 ? (
 					<div className="p-5 text-xl text-slate-400 font-semibold text-center">
 						<h1>
 							You currently have no contacts. Send a DM request by clicking the
@@ -184,17 +186,21 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 						</h1>
 					</div>
 				) : (
-					// userContacts.map((contactData: Contact) =>
-					// 	contactData.contacts.map((contact: User) => (
-					// 		<ContactBlock
-					// 			contactData={contact}
-					// 			key={contact._id}
-					// 			activeUsers={activeUsers}
-					// 			retrieveSelectedUser={retrieveSelectedUser}
-					// 		/>
-					// 	))
-					// )
-					<div>Contacts Here</div>
+					conversations.map((conversation: Conversation) =>
+						conversation.members.map(
+							(contactData: ShortUser) =>
+								contactData._id !== userData?._id && (
+									<Link to={`/conversations/${conversation._id}`}>
+										<ContactBlock
+											contactData={contactData}
+											activeUsers={activeUsers}
+											latestMessage={conversation.latestMessage}
+											key={conversation._id}
+										/>
+									</Link>
+								)
+						)
+					)
 				)}
 			</div>
 		</div>
@@ -205,6 +211,6 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 	) : frPage ? (
 		<FriendRequest updatePageStatus={updatePageStatus} />
 	) : (
-		<PendingFriendRequest updatePageStatus={updatePageStatus} />
+		<SentFriendRequest updatePageStatus={updatePageStatus} />
 	);
 }
