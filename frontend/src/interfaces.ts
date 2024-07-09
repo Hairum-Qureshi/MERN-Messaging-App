@@ -80,3 +80,8 @@ export interface Conversation {
 	latestMessage: string;
 	groupChatPhoto?: string;
 }
+
+export interface Media {
+	conversation_ID: string;
+	images_data: string[];
+}
