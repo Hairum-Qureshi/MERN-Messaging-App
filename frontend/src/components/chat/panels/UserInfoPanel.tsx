@@ -73,19 +73,7 @@ export default function UserInfoPanel({ otherUser }: Props) {
 							alt=""
 						/>
 					</div>
-					<div>
-						<img
-							className="h-auto max-w-full rounded-lg"
-							src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg"
-							alt=""
-						/>
-					</div>
 				</div>
-			</div>
-			<div className="m-2">
-				<button className="p-2 border border-green-400 bg-green-700 w-full rounded-md">
-					Save Changes
-				</button>
 			</div>
 		</div>
 	);
