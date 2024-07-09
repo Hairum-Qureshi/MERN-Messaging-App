@@ -35,10 +35,10 @@ import useConversation from "../../../hooks/useConversation";
 //		--> if the other user sends a message in the conversation, it re-adds the other user and therefore will show up for them
 
 interface Props {
-	retrieveSelectedUser: (user_data: User) => void;
+	retrieveSelectedContact: (contact: Conversation) => void;
 }
 
-export default function LeftPanel({ retrieveSelectedUser }: Props) {
+export default function LeftPanel({ retrieveSelectedContact }: Props) {
 	const [DMRequestSelected, setDMRequestSelected] = useState(false);
 	const [settingsPage, setSettingsPage] = useState(false);
 	const [frPage, setFRPage] = useState(false);
@@ -190,7 +190,10 @@ export default function LeftPanel({ retrieveSelectedUser }: Props) {
 						conversation.members.map(
 							(contactData: ShortUser) =>
 								contactData._id !== userData?._id && (
-									<Link to={`/conversations/${conversation._id}`}>
+									<Link
+										to={`/conversations/${conversation._id}`}
+										onClick={() => retrieveSelectedContact(conversation)}
+									>
 										<ContactBlock
 											contactData={contactData}
 											activeUsers={activeUsers}
