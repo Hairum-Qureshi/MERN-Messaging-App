@@ -24,7 +24,7 @@ export default function Settings({ updatePageStatus }: Props) {
 	}
 
 	return (
-		<div className="border border-blue-500 h-screen w-1/4 bg-slate-800 flex flex-col">
+		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
 			<div className="flex items-center">
 				<div
 					onClick={() => updatePageStatus("settings")}
@@ -107,13 +107,14 @@ export default function Settings({ updatePageStatus }: Props) {
 				/>
 			</div>
 			<div className="m-2 flex flex-col flex-grow">
-				<label htmlFor="biography" className="m-1">
-					Tell people about yourself
+				<label htmlFor="biography" className="flex">
+					Tell people about yourself: <span className="ml-auto">0/235</span>
 				</label>
 				<textarea
 					id="biography"
 					placeholder="Write a short bio about yourself..."
 					className="w-full mt-2 p-2 flex-grow outline-none rounded text-sm bg-slate-900 border border-blue-500 resize-none h-full"
+					maxLength={235}
 					value={userData?.biography}
 				></textarea>
 			</div>
