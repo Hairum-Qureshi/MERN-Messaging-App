@@ -3,25 +3,42 @@ import {
 	faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuthContext from "../../../../contexts/authContext";
+import useSettings from "../../../../hooks/useSettings";
 
 interface Props {
 	updatePageStatus: (page: string) => void;
 }
 
 // TODO
-// Add an emoji button to the status textarea
+// Add an emoji button to the status update field
 // Add the ability for users to change their profile picture
 
 export default function Settings({ updatePageStatus }: Props) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { userData } = useAuthContext()!;
 
+	const [newFirstName, setNewFirstName] = useState("");
+	const [newLastName, setNewLastName] = useState("");
+	const [statusUpdate, setStatusUpdate] = useState("");
+	const [userBio, setUserBio] = useState("");
+
 	function changePfp() {
 		fileInputRef.current?.click();
 	}
+
+	useEffect(() => {
+		if (userData) {
+			setNewFirstName(userData.full_name.split(" ")[0]);
+			setNewLastName(userData.full_name.split(" ")[1]);
+			setStatusUpdate(userData.status_update || "");
+			setUserBio(userData.biography);
+		}
+	}, [userData]);
+
+	const { saveChanges } = useSettings();
 
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
@@ -60,7 +77,15 @@ export default function Settings({ updatePageStatus }: Props) {
 					className="flex items-center justify-center ml-3 hover:cursor-pointer"
 					onClick={changePfp}
 				>
-					<input type="file" ref={fileInputRef} className="hidden" />
+					<label htmlFor="image-upload" className="hidden">
+						Upload Image
+					</label>
+					<input
+						id="image-upload"
+						type="file"
+						ref={fileInputRef}
+						className="hidden"
+					/>
 					<img
 						src={userData?.profile_picture}
 						alt="User pfp"
@@ -77,9 +102,11 @@ export default function Settings({ updatePageStatus }: Props) {
 				</label>
 				<input
 					type="text"
+					value={statusUpdate}
 					id="status-update"
 					placeholder="What's your status?"
 					className="w-full mt-2 p-2 outline-none rounded text-sm bg-slate-900 border border-blue-500"
+					onChange={e => setStatusUpdate(e.target.value)}
 				/>
 			</div>
 			<div className="m-2">
@@ -90,8 +117,9 @@ export default function Settings({ updatePageStatus }: Props) {
 					type="text"
 					id="first-name"
 					placeholder="Enter your first name"
-					value={userData?.full_name.split(" ")[0]}
+					value={newFirstName}
 					className="w-full mt-2 p-2 outline-none rounded text-sm bg-slate-900 border border-blue-500"
+					onChange={e => setNewFirstName(e.target.value)}
 				/>
 			</div>
 			<div className="m-2">
@@ -102,24 +130,32 @@ export default function Settings({ updatePageStatus }: Props) {
 					type="text"
 					id="last-name"
 					placeholder="Enter your last name"
-					value={userData?.full_name.split(" ")[1]}
+					value={newLastName}
 					className="w-full mt-2 p-2 outline-none rounded text-sm bg-slate-900 border border-blue-500"
+					onChange={e => setNewLastName(e.target.value)}
 				/>
 			</div>
 			<div className="m-2 flex flex-col flex-grow">
 				<label htmlFor="biography" className="flex">
-					Tell people about yourself: <span className="ml-auto">0/235</span>
+					Tell people about yourself:{" "}
+					<span className="ml-auto">{userBio?.length || 0}/235</span>
 				</label>
 				<textarea
 					id="biography"
 					placeholder="Write a short bio about yourself..."
 					className="w-full mt-2 p-2 flex-grow outline-none rounded text-sm bg-slate-900 border border-blue-500 resize-none h-full"
 					maxLength={235}
-					value={userData?.biography}
+					value={userBio}
+					onChange={e => setUserBio(e.target.value)}
 				></textarea>
 			</div>
 			<div className="m-2">
-				<button className="p-2 border border-green-400 bg-green-700 w-full rounded-md">
+				<button
+					className="p-2 border border-green-400 bg-green-700 w-full rounded-md"
+					onClick={() =>
+						saveChanges(newFirstName, newLastName, statusUpdate, userBio)
+					}
+				>
 					Save Changes
 				</button>
 			</div>
