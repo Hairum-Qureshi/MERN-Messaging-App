@@ -1,14 +1,10 @@
 import { Conversation, ShortUser } from "../../../interfaces";
 
 interface Props {
-	selectedConversation: Conversation;
 	otherUser: ShortUser[];
 }
 
-export default function UserInfoPanel({
-	selectedConversation,
-	otherUser
-}: Props) {
+export default function UserInfoPanel({ otherUser }: Props) {
 	console.log(otherUser);
 	return (
 		<div className="w-1/2 border border-white p-5">
@@ -21,16 +17,16 @@ export default function UserInfoPanel({
 			</div>
 			<h1 className="text-2xl text-center mt-5">{otherUser[0].full_name}</h1>
 			<h2 className="font-semibold text-blue-500 text-center m-2">
-				Insert some status here...
+				{otherUser[0].status_update ||
+					`${
+						otherUser[0].full_name.split(" ")[0]
+					} currently has no status update`}
 			</h2>
 			<div className="text-center my-3">
 				<h1 className="text-xl font-semibold">ABOUT</h1>
 				<div className="border border-white w-full"></div>
 				<p className="text-yellow-400 text-base mt-3">
-					User Bio Here Lorem ipsum dolor, sit amet consectetur adipisicing
-					elit. Repudiandae, laudantium repellat! Recusandae mollitia
-					reprehenderit a, in iste ducimus ut hic veniam consequatur illum.
-					Iste, doloremque corporis ipsam nobis aliquid aspernatur.
+					{otherUser[0].biography}
 				</p>
 			</div>
 			<div className="text-center my-2 flex flex-col">
