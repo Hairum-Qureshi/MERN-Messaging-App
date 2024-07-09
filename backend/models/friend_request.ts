@@ -25,4 +25,4 @@ const friendRequestSchema = new Schema(
 );
 
 type FriendRequest = InferSchemaType<typeof friendRequestSchema>;
-export default model<FriendRequest>("FriendRequest", friendRequestSchema);
+export default model<FriendRequest>("Friend_Request", friendRequestSchema);

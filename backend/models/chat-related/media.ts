@@ -1,6 +1,6 @@
 import mongoose, { InferSchemaType, Schema, model } from "mongoose";
 
-const messageSchema = new Schema(
+const mediaSchema = new Schema(
 	{
 		sender: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -10,9 +10,8 @@ const messageSchema = new Schema(
 			type: String,
 			ref: "Conversation"
 		},
-		content: {
-			type: String,
-			trim: true
+		images_data: {
+			type: [String]
 		}
 	},
 	{
@@ -20,5 +19,5 @@ const messageSchema = new Schema(
 	}
 );
 
-type Message = InferSchemaType<typeof messageSchema>;
-export default model<Message>("Message", messageSchema);
+type Media = InferSchemaType<typeof mediaSchema>;
+export default model<Media>("Media", mediaSchema);
