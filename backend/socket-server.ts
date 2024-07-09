@@ -69,6 +69,14 @@ const initializeSocket = (server: HttpServer) => {
 			}
 		);
 
+		socket.on("share-status-update", status_data => {
+			const { status, poster_uid } = status_data;
+			io.emit("receive-status-update", {
+				status: status,
+				poster_uid: poster_uid
+			});
+		});
+
 		socket.on("disconnect", () => {
 			console.log("A user disconnected".red);
 			removeUser(socket.id);
