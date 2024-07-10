@@ -1,4 +1,9 @@
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import {
+	faCircleInfo,
+	faFaceSmile,
+	faFilm,
+	faImage
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ShortUser } from "../../interfaces";
 
@@ -48,10 +53,17 @@ export default function Conversation({
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
 					<div className="flex flex-col">
-						<textarea
-							className="w-full p-2 box-border bg-slate-700 border-none border-2 border-gray-600 resize-none text-small outline-none"
-							placeholder={`Enter a message to ${userContact.full_name}`}
-						></textarea>
+						<div className="flex items-center border border-red-500 bg-slate-700">
+							<textarea
+								className="w-full p-2 box-border bg-slate-700 border-none border-2 border-gray-600 resize-none text-small outline-none"
+								placeholder={`Enter a message to ${userContact.full_name}. To send, hit the 'enter' key.`}
+							></textarea>
+							<div className="text-2xl ml-auto p-1">
+								<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
+								<FontAwesomeIcon icon={faImage} />
+								<FontAwesomeIcon icon={faFilm} />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
