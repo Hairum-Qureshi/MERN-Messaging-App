@@ -2,13 +2,13 @@ import mongoose, { InferSchemaType, Schema, model } from "mongoose";
 
 const mediaSchema = new Schema(
 	{
-		sender: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User"
-		},
 		conversation_ID: {
 			type: String,
 			ref: "Conversation"
+		},
+		message_ID: {
+			type: String,
+			ref: "Message"
 		},
 		images_data: {
 			type: [String]
