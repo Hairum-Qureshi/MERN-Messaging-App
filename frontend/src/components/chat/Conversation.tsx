@@ -22,6 +22,39 @@ export default function Conversation({
 }: Props) {
 	const divRef = useRef<HTMLDivElement>(null);
 	const [message, setMessage] = useState("");
+	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+
+	function userPasted(e: any) {
+		// TODO - need to change 'any' to an appropriate type for 'e'
+		// Function for handling when the user pastes an image into the content-edible div
+
+		const image = e.clipboardData || window.Clipboard;
+		const file = image.files[0];
+		if (file) {
+			const reader = new FileReader();
+
+			reader.onloadend = () => {
+				const blob = new Blob([file], { type: file.type });
+				const imageURL = URL.createObjectURL(blob);
+				if (uploadedImages.length < 4) {
+					setUploadedImages(prev => [...prev, imageURL]);
+				} else {
+					alert("You can only attach 4 images per message");
+				}
+			};
+
+			if (file) {
+				reader.readAsDataURL(file);
+			}
+		}
+	}
+
+	function delImage(imageURL: string) {
+		const filteredImages: string[] = uploadedImages.filter(
+			(image: string) => image !== imageURL
+		);
+		setUploadedImages(filteredImages);
+	}
 
 	const handleKeyDown = (event: React.KeyboardEvent) => {
 		if (event.key === "Enter" && !event.shiftKey && divRef.current) {
@@ -73,58 +106,25 @@ export default function Conversation({
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
 					<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
-						<div className="bg-slate-800 p-2">
-							<div className="flex">
-								<div className="relative">
-									<div className="flex items-center">
-										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
+						{uploadedImages.length > 0 && (
+							<div className="flex justify-left bg-slate-800 w-full">
+								{uploadedImages.map((imageURL: string, index: number) => (
+									<div key={index} className="p-2 relative">
+										<button
+											className="absolute mt-1 right-4 text-2xl text-red-500 bg-red-900 rounded-md w-8 h-8 flex items-center justify-center"
+											onClick={() => delImage(imageURL)}
+										>
 											✕
 										</button>
 										<img
-											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
-											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
-											alt=""
+											src={imageURL}
+											alt="Uploaded Image"
+											className="w-64 h-32 object-cover rounded-md border border-white"
 										/>
 									</div>
-								</div>
-								<div className="relative">
-									<div className="flex items-center">
-										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
-											✕
-										</button>
-										<img
-											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
-											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
-											alt=""
-										/>
-									</div>
-								</div>
-								<div className="relative">
-									<div className="flex items-center">
-										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
-											✕
-										</button>
-										<img
-											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
-											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
-											alt=""
-										/>
-									</div>
-								</div>
-								<div className="relative">
-									<div className="flex items-center">
-										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
-											✕
-										</button>
-										<img
-											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
-											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
-											alt=""
-										/>
-									</div>
-								</div>
+								))}
 							</div>
-						</div>
+						)}
 						<div className="flex flex-col h-full">
 							<div className="flex bg-slate-700 h-full">
 								<div
@@ -133,6 +133,7 @@ export default function Conversation({
 									contentEditable={"plaintext-only"}
 									onInput={() => setMessage(divRef.current.innerText)} // Update message state on input
 									onKeyDown={handleKeyDown}
+									onPaste={e => userPasted(e)}
 								/>
 								<div className="text-2xl ml-auto p-1">
 									<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
