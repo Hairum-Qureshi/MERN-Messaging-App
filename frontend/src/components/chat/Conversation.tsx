@@ -7,6 +7,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ShortUser } from "../../interfaces";
 import { useRef, useState } from "react";
+import Message from "./Message";
 
 interface Props {
 	toggleInfoPanel: () => void;
@@ -66,6 +67,9 @@ export default function Conversation({
 					>
 						<FontAwesomeIcon icon={faCircleInfo} />
 					</div>
+				</div>
+				<div className="border border-white overflow-auto h-5/6">
+					<Message />
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
 					<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
