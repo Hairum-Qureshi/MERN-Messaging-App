@@ -5,9 +5,11 @@ import {
 	faImage
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ShortUser } from "../../interfaces";
-import { useRef, useState } from "react";
-import Message from "./Message";
+import { Message, ShortUser } from "../../interfaces";
+import { useEffect, useRef, useState } from "react";
+import MessageBubble from "./Message";
+import useConversation from "../../hooks/useConversation";
+import useAuthContext from "../../contexts/authContext";
 
 interface Props {
 	toggleInfoPanel: () => void;
@@ -24,6 +26,9 @@ export default function Conversation({
 	const [message, setMessage] = useState("");
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 	const [isEmpty, setIsEmpty] = useState(true);
+
+	const { sendMessage, chatMessages } = useConversation();
+	const { userData } = useAuthContext()!;
 
 	function userPasted(e: any) {
 		// TODO - need to change 'any' to an appropriate type for 'e'
@@ -71,7 +76,7 @@ export default function Conversation({
 			if (!currentMessage) {
 				alert("You can't send an empty text");
 			} else {
-				setMessage("");
+				sendMessage(message);
 			}
 		}
 	};
@@ -110,7 +115,15 @@ export default function Conversation({
 					</div>
 				</div>
 				<div className="overflow-auto h-5/6">
-					<Message />
+					{chatMessages.map((message: Message) => {
+						return (
+							<MessageBubble
+								key={message._id}
+								message={message}
+								you={message.sender?._id === userData?._id}
+							/>
+						);
+					})}
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
 					<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
@@ -147,6 +160,7 @@ export default function Conversation({
 									onPaste={e => userPasted(e)}
 								/>
 								<div className="text-2xl ml-auto p-1">
+									{/* <input type="file" className="hidden" onClick = {} /> */}
 									<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
 									<FontAwesomeIcon icon={faImage} />
 									<FontAwesomeIcon icon={faFilm} />
