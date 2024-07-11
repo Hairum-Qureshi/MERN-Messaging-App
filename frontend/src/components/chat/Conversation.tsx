@@ -68,11 +68,63 @@ export default function Conversation({
 						<FontAwesomeIcon icon={faCircleInfo} />
 					</div>
 				</div>
-				<div className="border border-white overflow-auto h-5/6">
+				<div className="overflow-auto h-5/6">
 					<Message />
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
 					<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
+						<div className="bg-slate-800 p-2">
+							<div className="flex">
+								<div className="relative">
+									<div className="flex items-center">
+										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
+											✕
+										</button>
+										<img
+											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
+											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
+											alt=""
+										/>
+									</div>
+								</div>
+								<div className="relative">
+									<div className="flex items-center">
+										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
+											✕
+										</button>
+										<img
+											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
+											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
+											alt=""
+										/>
+									</div>
+								</div>
+								<div className="relative">
+									<div className="flex items-center">
+										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
+											✕
+										</button>
+										<img
+											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
+											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
+											alt=""
+										/>
+									</div>
+								</div>
+								<div className="relative">
+									<div className="flex items-center">
+										<button className="absolute top-1 right-7 text-2xl text-red-600 bg-red-900 p-1 rounded-md w-7 h-7 flex items-center justify-center font-semibold">
+											✕
+										</button>
+										<img
+											src="https://i.pinimg.com/736x/e5/9e/51/e59e51dcbba47985a013544769015f25.jpg"
+											className="ml-2 mr-5 w-32 h-32 object-cover rounded-md border border-purple-500"
+											alt=""
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div className="flex flex-col h-full">
 							<div className="flex bg-slate-700 h-full">
 								<div
