@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.placeholder::before {
+	content: attr(data-placeholder);
+	pointer-events: none; /* Ensures the placeholder text is not selectable */
+	position: absolute;
+	top: 25%;
+	left: 10px;
+	transform: translateY(-50%);
+}

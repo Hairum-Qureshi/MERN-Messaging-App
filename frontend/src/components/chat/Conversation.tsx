@@ -23,6 +23,7 @@ export default function Conversation({
 	const divRef = useRef<HTMLDivElement>(null);
 	const [message, setMessage] = useState("");
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+	const [isEmpty, setIsEmpty] = useState(true);
 
 	function userPasted(e: any) {
 		// TODO - need to change 'any' to an appropriate type for 'e'
@@ -46,6 +47,13 @@ export default function Conversation({
 			if (file) {
 				reader.readAsDataURL(file);
 			}
+		}
+	}
+
+	function handleInput() {
+		if (divRef.current) {
+			setIsEmpty(divRef.current.innerText.trim() === "");
+			setMessage(divRef.current.innerText);
 		}
 	}
 
@@ -129,9 +137,12 @@ export default function Conversation({
 							<div className="flex bg-slate-700 h-full">
 								<div
 									ref={divRef}
-									className="w-full max-h-16 flex-grow overflow-y-auto p-2 box-border outline-none bg-slate-700 text-small"
+									className={`w-full max-h-16 flex-grow overflow-y-auto p-2 box-border outline-none bg-slate-700 text-small appearance-none ${
+										isEmpty ? "placeholder" : ""
+									}`}
+									data-placeholder={`Type a message to ${userContact.full_name}`}
 									contentEditable={"plaintext-only"}
-									onInput={() => setMessage(divRef.current.innerText)} // Update message state on input
+									onInput={handleInput}
 									onKeyDown={handleKeyDown}
 									onPaste={e => userPasted(e)}
 								/>
