@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ShortUser } from "../../interfaces";
+import { useRef, useState } from "react";
 
 interface Props {
 	toggleInfoPanel: () => void;
@@ -18,6 +19,21 @@ export default function Conversation({
 	userContact,
 	activity_status
 }: Props) {
+	const divRef = useRef<HTMLDivElement>(null);
+	const [message, setMessage] = useState("");
+
+	const handleKeyDown = (event: React.KeyboardEvent) => {
+		if (event.key === "Enter" && !event.shiftKey && divRef.current) {
+			event.preventDefault();
+			const currentMessage = divRef.current.innerText.trim();
+			if (!currentMessage) {
+				alert("You can't send an empty text");
+			} else {
+				setMessage("");
+			}
+		}
+	};
+
 	return (
 		<>
 			<div className="border relative border-blue-500 w-full">
@@ -52,16 +68,21 @@ export default function Conversation({
 					</div>
 				</div>
 				<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
-					<div className="flex flex-col">
-						<div className="flex items-center border border-red-500 bg-slate-700">
-							<textarea
-								className="w-full p-2 box-border bg-slate-700 border-none border-2 border-gray-600 resize-none text-small outline-none"
-								placeholder={`Enter a message to ${userContact.full_name}. To send, hit the 'enter' key.`}
-							></textarea>
-							<div className="text-2xl ml-auto p-1">
-								<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
-								<FontAwesomeIcon icon={faImage} />
-								<FontAwesomeIcon icon={faFilm} />
+					<div className="w-full absolute bottom-0 p-0 m-0 border border-blue-400">
+						<div className="flex flex-col h-full">
+							<div className="flex bg-slate-700 h-full">
+								<div
+									ref={divRef}
+									className="w-full max-h-16 flex-grow overflow-y-auto p-2 box-border outline-none bg-slate-700 text-small"
+									contentEditable={"plaintext-only"}
+									onInput={() => setMessage(divRef.current.innerText)} // Update message state on input
+									onKeyDown={handleKeyDown}
+								/>
+								<div className="text-2xl ml-auto p-1">
+									<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
+									<FontAwesomeIcon icon={faImage} />
+									<FontAwesomeIcon icon={faFilm} />
+								</div>
 							</div>
 						</div>
 					</div>
