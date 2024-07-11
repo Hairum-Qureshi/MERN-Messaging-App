@@ -41,7 +41,12 @@ async function getConversation(req: Request, res: Response) {
 			return res.status(400).json({ message: "Invalid user ID" });
 		}
 
-		const conversation = await Conversation.findById({ _id: conversation_id });
+		const conversation = await Conversation.findById({ _id: conversation_id })
+			.populate({
+				path: "members",
+				select: "_id full_name profile_picture"
+			})
+			.select("-__v");
 		res.status(201).json(conversation);
 	} catch (error) {
 		console.log(
