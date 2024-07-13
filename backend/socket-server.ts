@@ -80,6 +80,34 @@ const initializeSocket = (server: HttpServer) => {
 			});
 		});
 
+		socket.on("send-message", message_data => {
+			const {
+				_id,
+				sender_id,
+				sender_fullName,
+				sender_pfp,
+				conversation_ID,
+				message_content,
+				createdAt,
+				receiver_uid
+			} = message_data;
+
+			const receiver: SocketData = getUser(receiver_uid);
+			if (receiver) {
+				const messageBody = {
+					_id,
+					sender_id,
+					sender_fullName,
+					sender_pfp,
+					conversation_ID,
+					message_content,
+					createdAt,
+					receiver_uid
+				};
+				socket.to(receiver.socket_id).emit("receive-message", messageBody);
+			}
+		});
+
 		socket.on("disconnect", () => {
 			console.log("A user disconnected".red);
 			removeUser(socket.id);
