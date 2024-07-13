@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import useAuthContext from "../contexts/authContext";
-import { FriendRequest, SocketData, SocketTools } from "../interfaces";
+import {
+	FriendRequest,
+	MessageBody,
+	SocketData,
+	SocketTools,
+	StatusUpdateData
+} from "../interfaces";
 
 const socket_io = io("http://localhost:3000", { autoConnect: false });
 
@@ -11,6 +17,10 @@ export default function useSocketIO(): SocketTools {
 	const socket = useRef<Socket>(socket_io);
 	const [incomingFriendRequest, setIncomingFriendRequest] =
 		useState<FriendRequest>();
+	const [statusUpdateData, setStatusUpdateData] = useState<StatusUpdateData[]>(
+		[]
+	);
+	const [incomingMessage, setIncomingMessage] = useState<MessageBody>();
 
 	useEffect(() => {
 		socket.current.connect();
@@ -37,9 +47,22 @@ export default function useSocketIO(): SocketTools {
 					socket?.current && socket?.current.off("receive-friend-request");
 			}
 		);
+
+		socket.current.on(
+			"receive-status-update",
+			(statusUpdateData: StatusUpdateData) => {
+				setStatusUpdateData(prev => [...prev, statusUpdateData]);
+			}
+		);
+
+		socket.current.on("receive-message", (messageBody: MessageBody) => {
+			setIncomingMessage(messageBody);
+		});
+
 		// Cleanup function to disconnect the socket when the component unmounts
 		return () => {
 			socket.current.disconnect();
+			socket?.current && socket?.current.off("receive-message");
 		};
 	}, [userData]);
 
@@ -61,5 +84,43 @@ export default function useSocketIO(): SocketTools {
 		}
 	}
 
-	return { activeUsers, sendFriendRequestEvent, incomingFriendRequest };
+	function shareStatusUpdate(status: string, poster_uid: string) {
+		if (socket.current.connected) {
+			socket.current.emit("share-status-update", { status, poster_uid });
+		}
+	}
+
+	function sendMessageEvent(
+		_id: string,
+		sender_id: string,
+		sender_fullName: string,
+		sender_pfp: string,
+		conversation_ID: string,
+		message_content: string,
+		createdAt: string,
+		receiver_uid: string
+	) {
+		if (socket.current.connected) {
+			socket.current.emit("send-message", {
+				_id,
+				sender_id,
+				sender_fullName,
+				sender_pfp,
+				conversation_ID,
+				message_content,
+				createdAt,
+				receiver_uid
+			});
+		}
+	}
+
+	return {
+		activeUsers,
+		sendFriendRequestEvent,
+		incomingFriendRequest,
+		shareStatusUpdate,
+		statusUpdateData,
+		sendMessageEvent,
+		incomingMessage
+	};
 }
