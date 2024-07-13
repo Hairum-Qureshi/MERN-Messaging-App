@@ -6,10 +6,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Message, ShortUser } from "../../interfaces";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import MessageBubble from "./Message";
 import useConversation from "../../hooks/useConversation";
 import useAuthContext from "../../contexts/authContext";
+
+// TODO - need to auto scroll to the latest message
 
 interface Props {
 	toggleInfoPanel: () => void;
@@ -153,7 +155,7 @@ export default function Conversation({
 									className={`w-full max-h-16 flex-grow overflow-y-auto p-2 box-border outline-none bg-slate-700 text-small appearance-none ${
 										isEmpty ? "placeholder" : ""
 									}`}
-									data-placeholder={`Type a message to ${userContact.full_name}`}
+									data-placeholder={`Type a message to ${userContact.full_name}. Hit the 'enter' key to send a message.`}
 									contentEditable={"plaintext-only"}
 									onInput={handleInput}
 									onKeyDown={handleKeyDown}
