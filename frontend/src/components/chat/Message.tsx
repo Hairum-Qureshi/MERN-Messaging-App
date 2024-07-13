@@ -1,7 +1,9 @@
+import { useEffect, useRef } from "react";
+import { Message } from "../../interfaces";
+import moment from "moment";
+
 // !NOTE:
 // The last message image does not have a 'mr-2' class
-
-import { Message } from "../../interfaces";
 
 interface Props {
 	message: Message;
@@ -9,19 +11,31 @@ interface Props {
 }
 
 export default function Message({ message, you }: Props) {
+	const messageRef = useRef<HTMLDivElement>(null);
+
+	const scrollToBottom = () => {
+		messageRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [message]);
+
 	return (
-		<div className="w-full">
+		<div className="w-full" ref={messageRef}>
 			{!you ? (
 				<div className="m-2 p-2">
 					<div className="flex items-start">
 						<img
 							src={message.sender.profile_picture}
 							className="w-10 h-10 object-cover rounded-md border border-blue-500"
-							alt=""
+							alt="User pfp"
 						/>
 						<div className="ml-2 border border-blue-500 bg-blue-950 rounded-md p-2 text-sm flex flex-col">
 							<p>{message.content}</p>
-							<p className="text-xs text-right mt-1">{message.createdAt}</p>
+							<p className="text-xs text-right mt-1">
+								Sent {moment(message.createdAt).fromNow()}
+							</p>
 						</div>
 					</div>
 				</div>
@@ -30,12 +44,14 @@ export default function Message({ message, you }: Props) {
 					<div className="flex items-start justify-end">
 						<div className="mr-2 border border-purple-500 bg-purple-950 rounded-md p-2 text-sm flex flex-col">
 							<p>{message.content}</p>
-							<p className="text-xs text-right mt-1">{message.createdAt}</p>
+							<p className="text-xs text-right mt-1">
+								Sent {moment(message.createdAt).fromNow()}
+							</p>
 						</div>
 						<img
 							src={message.sender.profile_picture}
 							className="w-10 h-10 object-cover rounded-md border border-purple-500"
-							alt=""
+							alt="User Pfp"
 						/>
 					</div>
 				</div>
