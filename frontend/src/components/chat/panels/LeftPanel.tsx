@@ -33,6 +33,8 @@ import useSettings from "../../../hooks/useSettings";
 // --> if a user deletes a conversation between another user, it removes them from the array of 'members'
 //		--> if the other user sends a message in the conversation, it re-adds the other user and therefore will show up for them
 
+// TODO - make sure you implement the logic for showcasing the user's live status update in the UserInfoPanel component also
+
 interface Props {
 	retrieveSelectedContact: (contact: Conversation) => void;
 }
@@ -50,6 +52,7 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 	const { conversations } = useConversation();
 	const { checkCurrentUserStatusUpdate } = useSettings();
 	const { activeUsers, statusUpdateData } = useSocketIO();
+	const { conversationData } = useConversation();
 
 	function updatePageStatus(page: string) {
 		page === "dm_request"
@@ -60,23 +63,6 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 			? setFRPage(false)
 			: setPendingFRPage(false);
 	}
-
-	const curr_url = window.location.href;
-
-	useEffect(() => {
-		setDMRequestSelected(curr_url.includes("/dm-requests"));
-		setSettingsPage(curr_url.includes("/settings"));
-		if (curr_url.includes("/friend-requests/pending")) {
-			setPendingFRPage(true);
-			setFRPage(false);
-		} else if (curr_url.includes("/friend-requests")) {
-			setPendingFRPage(false);
-			setFRPage(true);
-		} else {
-			setPendingFRPage(false);
-			setFRPage(false);
-		}
-	}, [curr_url]);
 
 	return !settingsPage && !DMRequestSelected && !frPage && !pendingFRPage ? (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800">
@@ -98,14 +84,11 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 									: userData?.status_update}
 							</p>
 						</div>
-						<Link
-							to="/conversations/settings"
-							className="text-xl ml-auto border border-pink-400 rounded p-1 w-10 text-center bg-pink-800 hover:cursor-pointer active:bg-pink-600"
-						>
+						<div className="text-xl ml-auto border border-pink-400 rounded p-1 w-10 text-center bg-pink-800 hover:cursor-pointer active:bg-pink-600">
 							<div onClick={() => setSettingsPage(true)}>
 								<FontAwesomeIcon icon={faGear} />
 							</div>
-						</Link>
+						</div>
 					</div>
 				</div>
 				<div className="flex items-center justify-between mb-2 absolute bottom-0 left-2 right-2">
@@ -124,25 +107,20 @@ export default function LeftPanel({ retrieveSelectedContact }: Props) {
 							onClick={() => setAddUserMode(false)}
 						/>
 					)}
-					<Link
-						to="/conversations/friend-requests"
-						className="text-xl border border-orange-400 p-1 bg-yellow-600 rounded hover:cursor-pointer active:bg-orange-700 mr-3"
-					>
+					<div className="text-xl border border-orange-400 p-1 bg-yellow-600 rounded hover:cursor-pointer active:bg-orange-700 mr-3">
 						<FontAwesomeIcon
 							icon={faUser}
+							onClick={() => setFRPage(true)}
 							className="flex items-center justify-center"
 						/>
-					</Link>
-					<Link
-						to="/conversations/dm-requests"
-						className="text-xl border border-green-400 p-1 bg-green-800 rounded hover:cursor-pointer active:bg-green-700"
-					>
+					</div>
+					<div className="text-xl border border-green-400 p-1 bg-green-800 rounded hover:cursor-pointer active:bg-green-700">
 						<FontAwesomeIcon
 							icon={faInbox}
 							onClick={() => setDMRequestSelected(true)}
 							className="flex items-center justify-center"
 						/>
-					</Link>
+					</div>
 				</div>
 			</div>
 			<div className="w-full p-2 border border-blue-500 bg-slate-900 h-12 text-slate-300 flex items-center">
