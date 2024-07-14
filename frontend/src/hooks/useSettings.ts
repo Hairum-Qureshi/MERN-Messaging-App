@@ -11,6 +11,7 @@ interface Tools {
 		userBio: string
 	) => void;
 	checkCurrentUserStatusUpdate: () => string;
+	updateProfilePicture: (imageFile: File) => void;
 }
 
 // TODO - for the status update, implement a feature where the status gets removed after 24hrs
@@ -69,5 +70,14 @@ export default function useSettings(): Tools {
 		return "";
 	}
 
-	return { saveChanges, checkCurrentUserStatusUpdate };
+	function updateProfilePicture(imageFile: File) {
+		const formData: FormData = new FormData();
+		formData.append("profile_picture", imageFile);
+
+		axios.post("http://localhost:3000/api/user/upload", formData, {
+			withCredentials: true
+		});
+	}
+
+	return { saveChanges, checkCurrentUserStatusUpdate, updateProfilePicture };
 }
