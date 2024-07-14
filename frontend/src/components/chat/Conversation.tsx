@@ -28,7 +28,7 @@ export default function Conversation({
 	const [message, setMessage] = useState("");
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 	const [isEmpty, setIsEmpty] = useState(true);
-
+	const imageInputRef = useRef<HTMLInputElement>(null);
 	const { sendMessage, chatMessages } = useConversation();
 	const { userData } = useAuthContext()!;
 
@@ -57,10 +57,29 @@ export default function Conversation({
 		}
 	}
 
+	function openImagePrompt() {
+		if (imageInputRef.current) {
+			imageInputRef.current.click();
+		}
+	}
+
 	function handleInput() {
 		if (divRef.current) {
 			setIsEmpty(divRef.current.innerText.trim() === "");
 			setMessage(divRef.current.innerText);
+		}
+	}
+
+	function handleImage(event: React.ChangeEvent<HTMLInputElement>) {
+		// Function for handling when the user selects an image from their computer
+		const files: FileList | null = event.target.files;
+		if (files) {
+			const blob_url = window.URL.createObjectURL(files[0]);
+			if (uploadedImages.length < 4) {
+				setUploadedImages(prev => [...prev, blob_url]);
+			} else {
+				alert("You can only attach 4 images per message");
+			}
 		}
 	}
 
@@ -162,9 +181,19 @@ export default function Conversation({
 									onPaste={e => userPasted(e)}
 								/>
 								<div className="text-2xl ml-auto p-1">
-									{/* <input type="file" className="hidden" onClick = {} /> */}
+									<input
+										type="file"
+										accept="image/*"
+										className="hidden"
+										ref={imageInputRef}
+										onChange={event => handleImage(event)}
+									/>
 									<FontAwesomeIcon icon={faFaceSmile} className="mr-2" />
-									<FontAwesomeIcon icon={faImage} />
+									<FontAwesomeIcon
+										icon={faImage}
+										onClick={openImagePrompt}
+										className="hover:cursor-pointer"
+									/>
 									<FontAwesomeIcon icon={faFilm} />
 								</div>
 							</div>
