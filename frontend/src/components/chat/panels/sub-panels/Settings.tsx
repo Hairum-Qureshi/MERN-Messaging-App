@@ -25,6 +25,7 @@ export default function Settings({ updatePageStatus }: Props) {
 	const [statusUpdate, setStatusUpdate] = useState("");
 	const [userBio, setUserBio] = useState("");
 	const userPfpRef = useRef<HTMLImageElement>(null);
+	const { saveChanges, updateProfilePicture } = useSettings();
 
 	function changePfp() {
 		fileInputRef.current?.click();
@@ -41,13 +42,14 @@ export default function Settings({ updatePageStatus }: Props) {
 
 	function handleChangePfp(event: React.ChangeEvent<HTMLInputElement>) {
 		const files: FileList | null = event.target.files;
-		if (files) {
+		if (files && userPfpRef.current) {
 			const blob_url = window.URL.createObjectURL(files[0]);
-			userPfpRef.current!.src = blob_url;
+			userPfpRef.current.src = blob_url;
+
+			const imageFile: File = files[0];
+			updateProfilePicture(imageFile);
 		}
 	}
-
-	const { saveChanges } = useSettings();
 
 	return (
 		<div className="border border-blue-500 h-screen w-1/3 bg-slate-800 flex flex-col">
