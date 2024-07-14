@@ -24,6 +24,7 @@ export default function Settings({ updatePageStatus }: Props) {
 	const [newLastName, setNewLastName] = useState("");
 	const [statusUpdate, setStatusUpdate] = useState("");
 	const [userBio, setUserBio] = useState("");
+	const userPfpRef = useRef<HTMLImageElement>(null);
 
 	function changePfp() {
 		fileInputRef.current?.click();
@@ -38,6 +39,14 @@ export default function Settings({ updatePageStatus }: Props) {
 		}
 	}, [userData]);
 
+	function handleChangePfp(event: React.ChangeEvent<HTMLInputElement>) {
+		const files: FileList | null = event.target.files;
+		if (files) {
+			const blob_url = window.URL.createObjectURL(files[0]);
+			userPfpRef.current!.src = blob_url;
+		}
+	}
+
 	const { saveChanges } = useSettings();
 
 	return (
@@ -47,12 +56,10 @@ export default function Settings({ updatePageStatus }: Props) {
 					onClick={() => updatePageStatus("settings")}
 					className="text-xl border w-1/3 border-white-400 p-1 bg-slate-500 rounded hover:cursor-pointer active:bg-slate-700 m-4"
 				>
-					<Link to="/conversations">
-						<div className="flex items-center justify-center">
-							<FontAwesomeIcon icon={faArrowLeft} />
-							<span className="ml-2 text-lg">Go Back</span>
-						</div>
-					</Link>
+					<div className="flex items-center justify-center">
+						<FontAwesomeIcon icon={faArrowLeft} />
+						<span className="ml-2 text-lg">Go Back</span>
+					</div>
 				</div>
 				<div
 					onClick={() => updatePageStatus("settings")}
@@ -85,10 +92,12 @@ export default function Settings({ updatePageStatus }: Props) {
 						type="file"
 						ref={fileInputRef}
 						className="hidden"
+						onChange={event => handleChangePfp(event)}
 					/>
 					<img
 						src={userData?.profile_picture}
 						alt="User pfp"
+						ref={userPfpRef}
 						className="w-32 h-32 rounded-lg border border-white object-cover"
 					/>
 				</div>
