@@ -16,13 +16,6 @@ export default function App() {
 					<Route path="/sign-in" element={<SignIn />} />
 					<Route path="/conversations" element={<Chat />} />
 					<Route path="/conversations/:contact_id" element={<Chat />} />
-					<Route path="/conversations/settings" element={<Chat />} />
-					<Route path="/conversations/friend-requests" element={<Chat />} />
-					<Route
-						path="/conversations/friend-requests/pending"
-						element={<Chat />}
-					/>
-					<Route path="/conversations/dm-requests" element={<Chat />} />
 					<Route
 						path="/conversations/dm-requests/:request_id"
 						element={<Chat />}
