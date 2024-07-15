@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Message, ShortUser } from "../../interfaces";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBubble from "./Message";
 import useConversation from "../../hooks/useConversation";
 import useAuthContext from "../../contexts/authContext";
@@ -79,9 +79,19 @@ export default function Conversation({
 				setUploadedImages(prev => [...prev, blob_url]);
 			} else {
 				alert("You can only attach 4 images per message");
+				window.URL.revokeObjectURL(blob_url);
 			}
 		}
 	}
+
+	useEffect(() => {
+		// Cleanup function to revoke object URLs when the component unmounts
+		return () => {
+			uploadedImages.forEach(url => {
+				window.URL.revokeObjectURL(url);
+			});
+		};
+	}, [uploadedImages]);
 
 	function delImage(imageURL: string) {
 		const filteredImages: string[] = uploadedImages.filter(
@@ -95,7 +105,7 @@ export default function Conversation({
 			event.preventDefault();
 			const currentMessage = divRef.current.innerText.trim();
 			if (!currentMessage) {
-				alert("You can't send an empty text");
+				alert("Missing message content");
 			} else {
 				sendMessage(message);
 			}
