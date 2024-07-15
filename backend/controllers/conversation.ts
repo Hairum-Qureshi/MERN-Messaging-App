@@ -17,7 +17,7 @@ async function getAllConversations(req: Request, res: Response) {
 		})
 			.populate({
 				path: "members",
-				select: "full_name profile_picture biography _id status_update"
+				select: "_id full_name profile_picture biography status_update"
 			})
 			.select("-createdAt -updatedAt -__v")
 			.then(allConversations => {
@@ -44,7 +44,7 @@ async function getConversation(req: Request, res: Response) {
 		const conversation = await Conversation.findById({ _id: conversation_id })
 			.populate({
 				path: "members",
-				select: "_id full_name profile_picture"
+				select: "_id full_name profile_picture biography status_update"
 			})
 			.select("-__v");
 		res.status(201).json(conversation);
