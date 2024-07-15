@@ -165,7 +165,7 @@ export default function Conversation({
 								{uploadedImages.map((imageURL: string, index: number) => (
 									<div key={index} className="p-2 relative">
 										<button
-											className="absolute mt-1 right-4 text-2xl text-red-500 bg-red-900 rounded-md w-8 h-8 flex items-center justify-center"
+											className="absolute mt-1 right-4 top-3 text-2xl text-red-500 bg-red-900 rounded-md w-8 h-8 flex items-center justify-center"
 											onClick={() => delImage(imageURL)}
 										>
 											✕
