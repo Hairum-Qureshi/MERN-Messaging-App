@@ -7,11 +7,14 @@ import useSocketIO from "../../hooks/useSocketIO";
 import useAuthContext from "../../contexts/authContext";
 
 // TODO - make it so that depending on what chat ID is in the URL, it opens up to that chat
+// TODO - if you plan to allow users to change the chat background (or maybe provide presets), you'll need to update the Conversation model to hold another property for the chat background
 
 export default function Chat() {
 	const [showPanel, hidePanel] = useState(false);
 	const [selectedConversation, setSelectedConversation] =
 		useState<Conversation>();
+
+	const { userData } = useAuthContext()!;
 
 	function toggleInfoPanel() {
 		hidePanel(!showPanel);
@@ -31,10 +34,6 @@ export default function Chat() {
 		});
 	}
 
-	const { userData } = useAuthContext()!;
-
-	console.log(selectedConversation);
-
 	return (
 		<div className="w-full bg-gray-900 h-screen text-white flex">
 			<LeftPanel retrieveSelectedContact={retrieveSelectedContact} />
@@ -49,16 +48,18 @@ export default function Chat() {
 					</div>
 				) : (
 					<>
-						{selectedConversation.members.map((userContact: ShortUser) =>
-							userContact._id !== userData?._id ? (
+						{selectedConversation.members
+							.filter(
+								(userContact: ShortUser) => userContact._id !== userData?._id
+							)
+							.map((userContact: ShortUser) => (
 								<ConversationComponent
 									key={userContact._id}
 									toggleInfoPanel={toggleInfoPanel}
 									userContact={userContact}
 									activity_status={checkIfActive}
 								/>
-							) : null
-						)}
+							))}
 						{showPanel && <UserInfoPanel />}
 					</>
 				)}
