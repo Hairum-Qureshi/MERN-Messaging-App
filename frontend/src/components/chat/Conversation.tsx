@@ -27,7 +27,7 @@ export default function Conversation({
 	const divRef = useRef<HTMLDivElement>(null);
 	const [message, setMessage] = useState("");
 	const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-	const [isEmpty, setIsEmpty] = useState(true);
+	const [showPlaceholder, setShowPlaceholder] = useState(true);
 	const imageInputRef = useRef<HTMLInputElement>(null);
 	const { sendMessage, chatMessages } = useConversation();
 	const { userData } = useAuthContext()!;
@@ -65,7 +65,7 @@ export default function Conversation({
 
 	function handleInput() {
 		if (divRef.current) {
-			setIsEmpty(divRef.current.innerText.trim() === "");
+			setShowPlaceholder(divRef.current.innerText.trim() === "");
 			setMessage(divRef.current.innerText);
 		}
 	}
@@ -108,6 +108,8 @@ export default function Conversation({
 				alert("Missing message content");
 			} else {
 				sendMessage(message);
+				divRef.current.innerText = "";
+				setShowPlaceholder(true);
 			}
 		}
 	};
@@ -182,7 +184,7 @@ export default function Conversation({
 								<div
 									ref={divRef}
 									className={`w-full max-h-16 flex-grow overflow-y-auto p-2 box-border outline-none bg-slate-700 text-small appearance-none ${
-										isEmpty ? "placeholder" : ""
+										showPlaceholder ? "placeholder" : ""
 									}`}
 									data-placeholder={`Type a message to ${userContact.full_name}. Hit the 'enter' key to send a message.`}
 									contentEditable={"plaintext-only"}
