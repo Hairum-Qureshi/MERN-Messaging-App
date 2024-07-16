@@ -13,6 +13,10 @@ const messageSchema = new Schema(
 		content: {
 			type: String,
 			trim: true
+		},
+		attachments: {
+			type: [String],
+			default: []
 		}
 	},
 	{
