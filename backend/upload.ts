@@ -8,7 +8,14 @@ const storage = multer.diskStorage({
 		callback(null, FOLDER_PATH);
 	},
 	filename: (req, file, callback) => {
-		callback(null, `${Date.now()}-${file.originalname}`);
+		if (req.params.conversation_id && req.cookies.decoded_uid) {
+			callback(
+				null,
+				`${req.params.conversation_id}-${req.cookies.decoded_uid}-${file.originalname}`
+			);
+		} else {
+			callback(null, `${Date.now()}-${file.originalname}`);
+		}
 	}
 });
 
