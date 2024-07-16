@@ -15,13 +15,14 @@ router.get("/all", authenticated, getAllConversations);
 
 router.get("/:conversation_id", authenticated, getConversation);
 
-router.get(
-	"/:conversation_id/messages",
-	upload.single("message-attachments"),
-	getConversationMessages
-);
+router.get("/:conversation_id/messages", getConversationMessages);
 
-router.post("/:conversation_id/send-message", authenticated, sendMessage);
+router.post(
+	"/:conversation_id/send-message",
+	upload.single("message-attachments"),
+	authenticated,
+	sendMessage
+);
 
 router.get("/:conversation_id/get-media", authenticated, getMedia);
 
