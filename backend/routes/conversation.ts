@@ -19,8 +19,8 @@ router.get("/:conversation_id/messages", getConversationMessages);
 
 router.post(
 	"/:conversation_id/send-message",
-	upload.single("message-attachments"),
 	authenticated,
+	upload.array("message-attachments"),
 	sendMessage
 );
 
