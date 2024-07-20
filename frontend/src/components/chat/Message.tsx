@@ -91,7 +91,7 @@ export default function Message({ message, you }: Props) {
 				<div className="m-2 p-2">
 					<div className="flex items-start justify-end">
 						<div className="mr-2 border border-purple-500 bg-purple-950 rounded-md p-2 text-sm flex flex-col">
-							<p>{message.content}</p>
+							{message.content && <p>{message.content}</p>}
 							<div className="flex items-center mt-1">
 								{message.attachments.map((imageURL: string, index: number) => {
 									return (
