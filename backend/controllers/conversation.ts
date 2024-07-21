@@ -94,88 +94,115 @@ async function getConversationMessages(req: Request, res: Response) {
 async function sendMessage(req: Request, res: Response) {
 	const curr_uid = req.cookies.decoded_uid;
 	const { conversation_id } = req.params;
-	const { message } = req.body;
+	const message: string[] | string = Array.isArray(req.body.message)
+		? req.body.message[0]
+		: req.body.message;
+	const uploadedFiles: boolean =
+		req.body.uploadedFiles === "true" ? true : false;
 
-	fs.readdir(FOLDER_PATH, async (err, files) => {
-		if (err) {
-			console.log(err);
-			return res.status(500).send("Error reading files");
-		}
+	if (uploadedFiles) {
+		fs.readdir(FOLDER_PATH, async (err, files) => {
+			if (err) {
+				console.log(err);
+				return res.status(500).send("Error reading files");
+			}
 
-		const attachments: string[] = [];
+			const attachments: string[] = [];
 
-		for (const file of files) {
-			const file_parts: string[] = file.split("-");
-			if (file_parts[0] === conversation_id && file_parts[1] === curr_uid) {
-				// Makes sure that only the current user's uploaded images for the specific conversation (by convo ID) are identified and don't get mixed up with any other uploaded files from other users/from different conversations
-				const uploadedImagePath = path.resolve(
-					__dirname,
-					`../temp_images/${file}`
-				);
+			for (const file of files) {
+				const file_parts: string[] = file.split("-");
+				if (file_parts[0] === conversation_id && file_parts[1] === curr_uid) {
+					// Makes sure that only the current user's uploaded images for the specific conversation (by convo ID) are identified and don't get mixed up with any other uploaded files from other users/from different conversations
+					const uploadedImagePath = path.resolve(
+						__dirname,
+						`../temp_images/${file}`
+					);
 
+					try {
+						const uploadResult = await cloudinary.uploader.upload(
+							uploadedImagePath,
+							{
+								public_id: file
+							}
+						);
+
+						if (uploadResult) {
+							attachments.push(uploadResult.url);
+						}
+
+						// Delete the uploaded images from the 'temp_images' folder
+						fs.unlink(path.join(FOLDER_PATH, file), err => {
+							if (err) {
+								return console.log(
+									"<conversation.ts> controller".yellow.bold,
+									(err as Error).toString().red.bold
+								);
+							}
+						});
+
+						if (err) throw err;
+					} catch (error) {
+						console.log(error);
+					}
+				}
+			}
+
+			if (attachments.length > 0) {
 				try {
-					const uploadResult = await cloudinary.uploader.upload(
-						uploadedImagePath,
+					const createdMessage = await Message.create(
 						{
-							public_id: file
+							sender: curr_uid,
+							conversation_ID: conversation_id,
+							content: message[0] || message,
+							attachments: attachments
+						},
+						{
+							new: true
 						}
 					);
 
-					if (uploadResult) {
-						attachments.push(uploadResult.url);
-					}
-
-					// Delete the uploaded images from the 'temp_images' folder
-					fs.unlink(path.join(FOLDER_PATH, file), err => {
-						if (err) {
-							return console.log(
-								"<conversation.ts> controller".yellow.bold,
-								(err as Error).toString().red.bold
-							);
-						}
-					});
-
-					if (err) throw err;
-				} catch (error) {
-					console.log(error);
-				}
-			}
-		}
-
-		if (attachments.length > 0) {
-			try {
-				const createdMessage = await Message.create(
-					{
-						sender: curr_uid,
-						conversation_ID: conversation_id,
-						content: message[0],
-						attachments: attachments
-					},
-					{
-						new: true
-					}
-				);
-
-				const getCreatedMessage = await Message.findById({
-					_id: createdMessage[0]._id
-				})
-					.populate({
-						path: "sender",
-						select: "_id full_name profile_picture"
+					const getCreatedMessage = await Message.findById({
+						_id: createdMessage[0]._id
 					})
-					.select("-__v -updatedAt");
-				res.status(201).json(getCreatedMessage);
-			} catch (error) {
-				console.log(
-					"<conversation.ts> controller".yellow.bold,
-					(error as Error).toString().red.bold
-				);
-				return res.status(500).send("Error creating message");
+						.populate({
+							path: "sender",
+							select: "_id full_name profile_picture"
+						})
+						.select("-__v -updatedAt");
+					res.status(201).json(getCreatedMessage);
+				} catch (error) {
+					console.log(
+						"<conversation.ts> controller".yellow.bold,
+						(error as Error).toString().red.bold
+					);
+					return res.status(500).send("Error creating message");
+				}
+			} else {
+				return res.status(400).send("No valid attachments found");
 			}
-		} else {
-			return res.status(400).send("No valid attachments found");
-		}
-	});
+		});
+	} else {
+		const createdMessage = await Message.create(
+			{
+				sender: curr_uid,
+				conversation_ID: conversation_id,
+				content: message
+			},
+			{
+				new: true
+			}
+		);
+
+		const getCreatedMessage = await Message.findById({
+			_id: createdMessage[0]._id
+		})
+			.populate({
+				path: "sender",
+				select: "_id full_name profile_picture"
+			})
+			.select("-__v -updatedAt");
+		res.status(201).json(getCreatedMessage);
+	}
 }
 
 export {
