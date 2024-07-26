@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config();
 colors.enable();
 
-async function createToken(user_id: mongoose.Types.ObjectId): Promise<string> {
+function createToken(user_id: mongoose.Types.ObjectId): string {
 	try {
 		const payload = {
 			user_id
@@ -44,7 +44,7 @@ const sign_up = async (req: Request, res: Response) => {
 			password: hashed_password
 		});
 
-		const token = await createToken(newUser._id);
+		const token = createToken(newUser._id);
 		res
 			.status(201)
 			.cookie("auth-session", token, {
@@ -74,7 +74,7 @@ const sign_in = async (req: Request, res: Response) => {
 			return res.status(401).json({ message: "Invalid credentials" });
 		}
 
-		const token = await createToken(user._id);
+		const token = createToken(user._id);
 		res
 			.status(201)
 			.cookie("auth-session", token, { httpOnly: true, maxAge: 259200000 }) // 3 days in milliseconds
